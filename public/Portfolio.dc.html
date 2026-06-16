@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;background:#eef3f9;}
+a{text-decoration:none;}
+input,textarea{font-family:'Hanken Grotesk',sans-serif;}
+@keyframes floatUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+@keyframes pulseDot{0%,100%{opacity:1;}50%{opacity:.35;}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+</style>
+</helmet>
+
+<div style="font-family:'Hanken Grotesk',sans-serif;color:#0a2342;background:#ffffff;">
+
+<!-- ============ VARIANT SWITCHER ============ -->
+<div style="position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:300;display:flex;gap:4px;background:#ffffff;border:1px solid #dde6f1;border-radius:99px;padding:5px;box-shadow:0 18px 44px -16px rgba(10,35,66,.45);font-family:'Space Grotesk',sans-serif;">
+  <button onClick="{{ setA }}" style="border:none;cursor:pointer;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:600;transition:all .25s;background:{{ switchABg }};color:{{ switchAColor }};">Variasi A · Editorial</button>
+  <button onClick="{{ setB }}" style="border:none;cursor:pointer;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:600;transition:all .25s;background:{{ switchBBg }};color:{{ switchBColor }};">Variasi B · Korporat</button>
+</div>
+
+<!-- ============ OWNER LOCK BUTTON ============ -->
+<button onClick="{{ openDash }}" title="Owner dashboard" style="position:fixed;bottom:24px;right:24px;z-index:300;width:46px;height:46px;border-radius:99px;border:1px solid #dde6f1;background:#ffffff;cursor:pointer;box-shadow:0 12px 30px -14px rgba(10,35,66,.5);display:flex;align-items:center;justify-content:center;">
+  <span style="display:block;width:13px;height:11px;border:2px solid #0a2342;border-radius:3px;position:relative;margin-top:5px;"><span style="position:absolute;left:50%;top:-7px;transform:translateX(-50%);width:9px;height:9px;border:2px solid #0a2342;border-bottom:none;border-radius:6px 6px 0 0;"></span></span>
+</button>
+
+<!-- ============================================================= -->
+<!-- =====================  VARIANT A  ============================ -->
+<!-- ============================================================= -->
+<div style="display:{{ showA }};">
+
+  <!-- NAV -->
+  <nav style="position:sticky;top:0;z-index:100;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);border-bottom:1px solid #e8eef6;">
+    <div style="max-width:1180px;margin:0 auto;padding:18px 40px;display:flex;align-items:center;justify-content:space-between;">
+      <a href="#top-a" style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:21px;letter-spacing:-.02em;color:#0a2342;">Portofolio<span style="color:#1b63d6;">.</span></a>
+      <div style="display:flex;gap:34px;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:500;">
+        <a href="#about-a" style="color:#34507a;">About</a>
+        <a href="#stack-a" style="color:#34507a;">Stack</a>
+        <a href="#timeline-a" style="color:#34507a;">Timeline</a>
+        <a href="#work-a" style="color:#34507a;">Works</a>
+        <a href="#contact-a" style="color:#34507a;">Contact</a>
+      </div>
+      <a href="#contact-a" style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:#ffffff;background:{{ accent }};padding:11px 22px;border-radius:99px;">Get in touch</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header id="top-a" style="max-width:1180px;margin:0 auto;padding:92px 40px 72px;display:grid;grid-template-columns:1.12fr .88fr;gap:64px;align-items:center;">
+    <div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#1b63d6;margin-bottom:20px;">Software Engineering Student · Backend &amp; AI</div>
+      <h1 style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(46px,5.8vw,76px);line-height:1.05;letter-spacing:-.03em;margin:0 0 24px;color:#0a2342;">MUHAMMAD MIKAIL</h1>
+      <p style="font-size:18px;line-height:1.6;color:#5b7290;max-width:540px;margin:0 0 34px;">I build the backend side of software, with a steady pull toward AI. Currently studying Software Engineering at BINUS University focused on backend architecture, API design, and microservices.</p>
+      <div style="display:flex;gap:14px;align-items:center;">
+        <a href="#work-a" style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:#ffffff;background:{{ accent }};padding:15px 28px;border-radius:12px;">View work →</a>
+        <a href="#contact-a" style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:#0a2342;background:#ffffff;border:1px solid #dde6f1;padding:15px 28px;border-radius:12px;">Download CV</a>
+      </div>
+    </div>
+    <div style="position:relative;">
+      <div style="aspect-ratio:4/5;border-radius:20px;border:1px solid #dde6f1;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#f4f8fc;">
+        <img src="/foto.jpeg" alt="Muhammad Mikail" style="width:100%;height:100%;object-fit:cover;" />
+      </div>
+    </div>
+  </header>
+
+  <!-- ABOUT -->
+  <section id="about-a" style="border-top:1px solid #eef3f9;background:#fbfcfe;">
+    <div style="max-width:1180px;margin:0 auto;padding:96px 40px;display:grid;grid-template-columns:.9fr 1.1fr;gap:64px;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.2em;color:#1b63d6;">01 — ABOUT</div>
+        <h2 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:34px;letter-spacing:-.02em;margin:16px 0 0;line-height:1.15;">Solving real problems by building systems that actually work.</h2>
+      </div>
+      <div>
+        <p style="font-size:17px;line-height:1.75;color:#46607f;margin:0 0 22px;">I went into software engineering because I like solving real problems by building systems that work — and I kept studying AI and machine learning because pairing the two is where the more interesting solutions live.</p>
+        <p style="font-size:17px;line-height:1.75;color:#46607f;margin:0 0 40px;">So far I've owned backend architecture, API design and microservices across course and competition projects, and I'm increasingly drawn to larger, more complex multi-service systems.</p>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;">
+          <div style="border-left:2px solid #1b63d6;padding-left:18px;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;color:#0a2342;">3.21</div>
+            <div style="font-size:14px;color:#5b7290;margin-top:4px;">GPA / 4.00</div>
+          </div>
+          <div style="border-left:2px solid #1b63d6;padding-left:18px;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;color:#0a2342;">Top 5</div>
+            <div style="font-size:14px;color:#5b7290;margin-top:4px;">IOFest 2026 finalist</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="stack-a" style="max-width:1180px;margin:0 auto;padding:96px 40px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.2em;color:#1b63d6;">02 — STACK</div>
+    <h2 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:34px;letter-spacing:-.02em;margin:16px 0 44px;">Tools I reach for</h2>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:18px;">
+      <div style="border:1px solid #e3eaf3;border-radius:16px;padding:28px 30px;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;margin-bottom:18px;">Languages</div>
+        <div style="display:flex;flex-wrap:wrap;gap:9px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">C++</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">Java</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">Python</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">TypeScript</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">JavaScript</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">Dart</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">SQL</span>
+        </div>
+      </div>
+      <div style="border:1px solid #e3eaf3;border-radius:16px;padding:28px 30px;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;margin-bottom:18px;">Backend &amp; Frameworks</div>
+        <div style="display:flex;flex-wrap:wrap;gap:9px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">Node.js</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">NestJS</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">Express.js</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">Prisma</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">REST API</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">Microservices</span>
+        </div>
+      </div>
+      <div style="border:1px solid #e3eaf3;border-radius:16px;padding:28px 30px;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;margin-bottom:18px;">AI / Machine Learning</div>
+        <div style="display:flex;flex-wrap:wrap;gap:9px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">scikit-learn</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">XGBoost</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">Random Forest</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">PaddleOCR</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">Groq</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">Gemini</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">Streamlit</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">N8N</span>
+        </div>
+      </div>
+      <div style="border:1px solid #e3eaf3;border-radius:16px;padding:28px 30px;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;margin-bottom:18px;">Databases &amp; Cloud</div>
+        <div style="display:flex;flex-wrap:wrap;gap:9px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">PostgreSQL</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">Supabase</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">MySQL</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">Railway</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">Hugging Face</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:7px 13px;">Git / GitHub</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE + EDUCATION -->
+  <section id="timeline-a" style="border-top:1px solid #eef3f9;background:#fbfcfe;">
+    <div style="max-width:1180px;margin:0 auto;padding:96px 40px;display:grid;grid-template-columns:1.05fr .95fr;gap:72px;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.2em;color:#1b63d6;">03 — TIMELINE</div>
+        <h2 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:34px;letter-spacing:-.02em;margin:16px 0 40px;">Experience &amp; highlights</h2>
+        <div style="border-left:2px solid #e3eaf3;padding-left:30px;display:flex;flex-direction:column;gap:34px;">
+          <div style="position:relative;">
+            <span style="position:absolute;left:-37px;top:4px;width:12px;height:12px;border-radius:99px;background:#1b63d6;border:3px solid #fbfcfe;"></span>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#1b63d6;letter-spacing:.05em;">MAY — JUN 2026</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:19px;margin:6px 0 2px;">IOFest 2026 Finalist · 5th place</div>
+            <p style="font-size:15px;color:#5b7290;margin:0;line-height:1.6;">Backend developer &amp; proposal writer for a circular-economy waste marketplace (UNTAR BEM FTI). Reached the final round with a score of 81.78.</p>
+          </div>
+          <div style="position:relative;">
+            <span style="position:absolute;left:-37px;top:4px;width:12px;height:12px;border-radius:99px;background:#bcccdf;border:3px solid #fbfcfe;"></span>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#1b63d6;letter-spacing:.05em;">SEP — NOV 2024</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:19px;margin:6px 0 2px;">Laboratory Assistant Trainee · SLC BINUS</div>
+            <p style="font-size:15px;color:#5b7290;margin:0;line-height:1.6;">Selected into the Software Laboratory Center pre-training track (Batch 25-1). Built C++ data structures, Java OOP and SQL fundamentals.</p>
+          </div>
+          <div style="position:relative;">
+            <span style="position:absolute;left:-37px;top:4px;width:12px;height:12px;border-radius:99px;background:#bcccdf;border:3px solid #fbfcfe;"></span>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#1b63d6;letter-spacing:.05em;">2022 — 2023</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:19px;margin:6px 0 2px;">National Science Olympiad (OSN) · Informatics</div>
+            <p style="font-size:15px;color:#5b7290;margin:0;line-height:1.6;">Two-time competitor representing SMA Negeri 1 Kajen.</p>
+          </div>
+          <div style="position:relative;">
+            <span style="position:absolute;left:-37px;top:4px;width:12px;height:12px;border-radius:99px;background:#bcccdf;border:3px solid #fbfcfe;"></span>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#1b63d6;letter-spacing:.05em;">JUL 2023</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:19px;margin:6px 0 2px;">English Debate · Regional Winner</div>
+            <p style="font-size:15px;color:#5b7290;margin:0;line-height:1.6;">Winner at Kabupaten Pekalongan level and Pre-Province round.</p>
+          </div>
+        </div>
+      </div>
+      <div id="education-a">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.2em;color:#1b63d6;">04 — EDUCATION</div>
+        <h2 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:34px;letter-spacing:-.02em;margin:16px 0 40px;">Education</h2>
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div style="background:#ffffff;border:1px solid #e3eaf3;border-radius:16px;padding:26px 28px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#1b63d6;letter-spacing:.05em;">SEP 2024 — PRESENT</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:19px;margin:8px 0 4px;">BINUS University</div>
+            <div style="font-size:15px;color:#5b7290;line-height:1.55;">Computer Science — Software Engineering · GPA 3.21 / 4.00. Coursework: Software Architecture, Code Reengineering, Mobile/Hybrid Dev, Computational Biology.</div>
+          </div>
+          <div style="background:#ffffff;border:1px solid #e3eaf3;border-radius:16px;padding:26px 28px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#1b63d6;letter-spacing:.05em;">JUL 2021 — MAY 2024</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:19px;margin:8px 0 4px;">SMA Negeri 1 Kajen</div>
+            <div style="font-size:15px;color:#5b7290;">Natural Science (IPA)</div>
+          </div>
+          <div style="background:#ffffff;border:1px solid #e3eaf3;border-radius:16px;padding:26px 28px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#1b63d6;letter-spacing:.05em;">LEADERSHIP</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:19px;margin:8px 0 4px;">Organization experience</div>
+            <div style="font-size:15px;color:#5b7290;line-height:1.55;">Chairman of the Yearbook Committee &amp; member of the Student Representative Council (MPK) at SMA Negeri 1 Kajen.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKS CAROUSEL -->
+  <section id="work-a" style="max-width:1180px;margin:0 auto;padding:96px 40px;overflow:hidden;">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:44px;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.2em;color:#1b63d6;">05 — WORKS</div>
+        <h2 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:34px;letter-spacing:-.02em;margin:16px 0 0;">Selected projects</h2>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button onClick="{{ prev }}" style="width:46px;height:46px;border-radius:99px;border:1px solid #dde6f1;background:#ffffff;cursor:pointer;font-size:18px;color:#0a2342;">←</button>
+        <button onClick="{{ next }}" style="width:46px;height:46px;border-radius:99px;border:1px solid #dde6f1;background:#ffffff;cursor:pointer;font-size:18px;color:#0a2342;">→</button>
+      </div>
+    </div>
+    <div style="overflow:visible;">
+      <div style="display:flex;gap:24px;transition:transform .55s cubic-bezier(.4,0,.1,1);transform:{{ trackShift }};">
+        <article style="flex:0 0 78%;background:#ffffff;border:1px solid #dde6f1;border-radius:18px;overflow:hidden;box-shadow:0 24px 50px -34px rgba(10,35,66,.5);">
+          <a href="https://fe-restmaterial.vercel.app/" target="_blank" rel="noopener noreferrer" style="display:block;aspect-ratio:16/9;border-bottom:1px solid #dde6f1;overflow:hidden;position:relative;background:#f4f8fc;">
+            <img src="/assets/@RESTMATERIAL.png" alt="RestMaterial" style="width:100%;height:100%;object-fit:cover;" />
+          </a>
+          <div style="padding:28px 32px 32px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.12em;color:#1b63d6;">COMPETITION · BACKEND</div>
+            <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:26px;margin:10px 0 12px;letter-spacing:-.01em;">
+              <a href="https://fe-restmaterial.vercel.app/" target="_blank" rel="noopener noreferrer" style="color:#0a2342;text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
+                RestMaterial <span style="font-size:18px;color:#1b63d6;">↗</span>
+              </a>
+            </h3>
+            <p style="font-size:16px;line-height:1.65;color:#5b7290;margin:0 0 20px;max-width:640px;">Developed for the VO Festival 2026 National Web Development Competition (UNTAR), securing 5th place. As the Backend Engineer, Proposal Writer, and presenter, I engineered the Express and Supabase backend and built a CO2 impact calculator grounded in EPA and Bappenas emission factors. I authored the full project proposal and pitched to the panel of judges, bridging real-world environmental impact with dependable, user-centric engineering.</p>
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-top:12px;">
+              <div style="display:flex;flex-wrap:wrap;gap:9px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">Node.js</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">Express.js</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">Supabase</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">PostgreSQL</span>
+              </div>
+              <a href="https://fe-restmaterial.vercel.app/" target="_blank" rel="noopener noreferrer" style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:#0a2342;display:inline-flex;align-items:center;gap:4px;text-decoration:none;">
+                Visit Project <span style="color:#1b63d6;">↗</span>
+              </a>
+            </div>
+          </div>
+        </article>
+        <article style="flex:0 0 78%;background:#ffffff;border:1px solid #dde6f1;border-radius:18px;overflow:hidden;box-shadow:0 24px 50px -34px rgba(10,35,66,.5);">
+          <a href="https://github.com/AlvinPanjaitan/FE_Harmoney" target="_blank" rel="noopener noreferrer" style="display:block;aspect-ratio:16/9;border-bottom:1px solid #dde6f1;overflow:hidden;position:relative;background:#f4f8fc;">
+            <img src="/assets/harmoney-hero.png" alt="Harmoney" style="width:100%;height:100%;object-fit:cover;" />
+          </a>
+          <div style="padding:28px 32px 32px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.12em;color:#1b63d6;">AI · MOBILE BACKEND</div>
+            <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:26px;margin:10px 0 12px;letter-spacing:-.01em;">
+              <a href="https://github.com/AlvinPanjaitan/FE_Harmoney" target="_blank" rel="noopener noreferrer" style="color:#0a2342;text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
+                Harmoney <span style="font-size:18px;color:#1b63d6;">↗</span>
+              </a>
+            </h3>
+            <p style="font-size:16px;line-height:1.65;color:#5b7290;margin:0 0 20px;max-width:640px;">As the backend developer and AI engineer, I built the microservices connecting to the Groq API for Harmoney, a money management app featuring AI receipt scanning (OCR) and spend tracking (Harmoney Runway). I designed backend business logic layers and established the Supabase database integrated with Prisma migrations, ensuring stable connection to our layered architecture.</p>
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-top:12px;">
+              <div style="display:flex;flex-wrap:wrap;gap:9px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">Node.js</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">Express.js</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">Prisma</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">Supabase</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">Groq API</span>
+              </div>
+              <a href="https://github.com/AlvinPanjaitan/FE_Harmoney" target="_blank" rel="noopener noreferrer" style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:#0a2342;display:inline-flex;align-items:center;gap:4px;text-decoration:none;">
+                Visit Project <span style="color:#1b63d6;">↗</span>
+              </a>
+            </div>
+          </div>
+        </article>
+        <article style="flex:0 0 78%;background:#ffffff;border:1px solid #dde6f1;border-radius:18px;overflow:hidden;box-shadow:0 24px 50px -34px rgba(10,35,66,.5);">
+          <a href="https://www.natynext.com/" target="_blank" rel="noopener noreferrer" style="display:block;aspect-ratio:16/9;border-bottom:1px solid #dde6f1;overflow:hidden;position:relative;background:#f4f8fc;">
+            <img src="/assets/@NATY.png" alt="NATY" style="width:100%;height:100%;object-fit:cover;" />
+          </a>
+          <div style="padding:28px 32px 32px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.12em;color:#1b63d6;">STUDIO · BACKEND</div>
+            <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:26px;margin:10px 0 12px;letter-spacing:-.01em;">
+              <a href="https://www.natynext.com/" target="_blank" rel="noopener noreferrer" style="color:#0a2342;text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
+                NATY (Nusantara Technology) <span style="font-size:18px;color:#1b63d6;">↗</span>
+              </a>
+            </h3>
+            <p style="font-size:16px;line-height:1.65;color:#5b7290;margin:0 0 20px;max-width:640px;">As Co-Founder, CEO, and Backend Developer of NATY, I consolidated our freelance developer portfolios under a single software agency brand to establish market credibility. As CEO, I manage client relationships, scope, and team delivery. As Backend Developer, I own the server-side architecture, APIs, databases, third-party integrations, and deployment, emphasizing security and reliability.</p>
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-top:12px;">
+              <div style="display:flex;flex-wrap:wrap;gap:9px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">Node.js</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">Express.js</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">PostgreSQL</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">API Design</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">Docker</span>
+              </div>
+              <a href="https://www.natynext.com/" target="_blank" rel="noopener noreferrer" style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:#0a2342;display:inline-flex;align-items:center;gap:4px;text-decoration:none;">
+                Visit Project <span style="color:#1b63d6;">↗</span>
+              </a>
+            </div>
+          </div>
+        </article>
+        <article style="flex:0 0 78%;background:#ffffff;border:1px solid #dde6f1;border-radius:18px;overflow:hidden;box-shadow:0 24px 50px -34px rgba(10,35,66,.5);">
+          <a href="https://www.figma.com/design/6AAL3gYHY0GKjh3gCYjWZ7/GUNDAR?node-id=7-3&t=g0CxHTxji3MQASPi-1" target="_blank" rel="noopener noreferrer" style="display:block;aspect-ratio:16/9;border-bottom:1px solid #dde6f1;overflow:hidden;position:relative;background:#f4f8fc;">
+            <img src="/assets/@GEOLAPAK.png" alt="GeoLapak" style="width:100%;height:100%;object-fit:cover;" />
+          </a>
+          <div style="padding:28px 32px 32px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.12em;color:#1b63d6;">HACKATHON · SPATIAL / AI</div>
+            <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:26px;margin:10px 0 12px;letter-spacing:-.01em;">
+              <a href="https://www.figma.com/design/6AAL3gYHY0GKjh3gCYjWZ7/GUNDAR?node-id=7-3&t=g0CxHTxji3MQASPi-1" target="_blank" rel="noopener noreferrer" style="color:#0a2342;text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
+                GeoLapak <span style="font-size:18px;color:#1b63d6;">↗</span>
+              </a>
+            </h3>
+            <p style="font-size:16px;line-height:1.65;color:#5b7290;margin:0 0 20px;max-width:640px;">Created for the Gunadarma Code Week hackathon, GeoLapak is a location-intelligence platform helping entrepreneurs identify target markets and property agents find rental spaces. As the team's hacker, I proposed the core concept, mapped the technical stack, and made key architectural decisions regarding spatial data tools and location-based APIs.</p>
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-top:12px;">
+              <div style="display:flex;flex-wrap:wrap;gap:9px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">Node.js</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">Express.js</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">PostgreSQL</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">Google Maps API</span>
+              </div>
+              <a href="https://www.figma.com/design/6AAL3gYHY0GKjh3gCYjWZ7/GUNDAR?node-id=7-3&t=g0CxHTxji3MQASPi-1" target="_blank" rel="noopener noreferrer" style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:#0a2342;display:inline-flex;align-items:center;gap:4px;text-decoration:none;">
+                Visit Project <span style="color:#1b63d6;">↗</span>
+              </a>
+            </div>
+          </div>
+        </article>
+        <article style="flex:0 0 78%;background:#ffffff;border:1px solid #dde6f1;border-radius:18px;overflow:hidden;box-shadow:0 24px 50px -34px rgba(10,35,66,.5);">
+          <a href="https://github.com/MikailMuh/Code-Reenginering-AOL-Hotel-Management-Case" target="_blank" rel="noopener noreferrer" style="display:block;aspect-ratio:16/9;border-bottom:1px solid #dde6f1;overflow:hidden;position:relative;background:#f4f8fc;">
+            <img src="/assets/@REFACTORING.png" alt="Refactoring Hotel Management" style="width:100%;height:100%;object-fit:cover;" />
+          </a>
+          <div style="padding:28px 32px 32px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.12em;color:#1b63d6;">ACADEMIC · RE-ENGINEERING</div>
+            <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:26px;margin:10px 0 12px;letter-spacing:-.01em;">
+              <a href="https://github.com/MikailMuh/Code-Reenginering-AOL-Hotel-Management-Case" target="_blank" rel="noopener noreferrer" style="color:#0a2342;text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
+                Refactoring Hotel Management <span style="font-size:18px;color:#1b63d6;">↗</span>
+              </a>
+            </h3>
+            <p style="font-size:16px;line-height:1.65;color:#5b7290;margin:0 0 20px;max-width:640px;">As Project Manager, I led a technical debt reduction effort for a legacy hotel management system. I analyzed and mapped god classes and modularity coupling smells, then delegated refactoring tasks. We transitioned the application into a clean domain-driven architecture with UI, Service, and Domain layers, successfully replacing rigid inheritance with delegation.</p>
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-top:12px;">
+              <div style="display:flex;flex-wrap:wrap;gap:9px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">Java</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">Design Patterns</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">UML</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">Refactoring</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:8px;padding:6px 12px;">Clean Architecture</span>
+              </div>
+              <a href="https://github.com/MikailMuh/Code-Reenginering-AOL-Hotel-Management-Case" target="_blank" rel="noopener noreferrer" style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:#0a2342;display:inline-flex;align-items:center;gap:4px;text-decoration:none;">
+                Visit Project <span style="color:#1b63d6;">↗</span>
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:9px;margin-top:38px;">
+      <sc-for list="{{ dots }}" as="dot" hint-placeholder-count="5">
+        <button onClick="{{ dot.onClick }}" style="{{ dot.style }}"></button>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- CONTACT (with form) -->
+  <section id="contact-a" style="background:#0a2342;color:#ffffff;">
+    <div style="max-width:1180px;margin:0 auto;padding:104px 40px;display:grid;grid-template-columns:1fr 1fr;gap:72px;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.2em;color:#7fa3da;">06 — CONTACT ME</div>
+        <h2 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(34px,4.5vw,52px);letter-spacing:-.03em;margin:18px 0 18px;line-height:1.05;">Let's build something solid.</h2>
+        <p style="font-size:18px;color:#9fb4d2;max-width:440px;margin:0 0 40px;line-height:1.6;">Have a backend or AI project, internship, or collaboration in mind? Drop me a message — it lands straight in my dashboard.</p>
+        <div style="display:flex;flex-direction:column;gap:18px;font-family:'JetBrains Mono',monospace;font-size:14px;">
+          <a href="/cdn-cgi/l/email-protection#85e8eceee4ece9abb7b5b4b3abb4b7c5e2e8e4ece9abe6eae8" style="color:#dbe7fb;display:flex;align-items:center;gap:12px;"><span style="width:6px;height:6px;border-radius:99px;background:{{ accent }};"></span><span class="__cf_email__" data-cfemail="e18c888a80888dcfd3d1d0d7cfd0d3a1868c80888dcf828e8c">[email&#160;protected]</span></a>
+          <a href="https://github.com/MikailMuh" style="color:#dbe7fb;display:flex;align-items:center;gap:12px;"><span style="width:6px;height:6px;border-radius:99px;background:{{ accent }};"></span>github.com/MikailMuh</a>
+          <a href="https://linkedin.com/in/muhammad-mikail-281780317" style="color:#dbe7fb;display:flex;align-items:center;gap:12px;"><span style="width:6px;height:6px;border-radius:99px;background:{{ accent }};"></span>linkedin.com/in/muhammad-mikail</a>
+          <div style="color:#9fb4d2;display:flex;align-items:center;gap:12px;"><span style="width:6px;height:6px;border-radius:99px;background:#3f5d84;"></span>Palmerah, Jakarta Barat</div>
+        </div>
+      </div>
+      <div>
+        <!-- form -->
+        <div style="display:{{ formDisplay }};">
+          <form onSubmit="{{ submitForm }}" style="display:flex;flex-direction:column;gap:16px;background:#0d2a4f;border:1px solid #1c3b60;border-radius:18px;padding:32px;">
+            <div>
+              <label style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#9fb4d2;letter-spacing:.05em;">YOUR NAME</label>
+              <input value="{{ nameVal }}" onChange="{{ setName }}" placeholder="Jane Doe" style="width:100%;margin-top:8px;background:#081f3c;border:1px solid #1c3b60;border-radius:10px;padding:13px 14px;color:#ffffff;font-size:15px;outline:none;" />
+            </div>
+            <div>
+              <label style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#9fb4d2;letter-spacing:.05em;">EMAIL</label>
+              <input value="{{ emailVal }}" onChange="{{ setEmail }}" type="email" placeholder="jane@company.com" style="width:100%;margin-top:8px;background:#081f3c;border:1px solid #1c3b60;border-radius:10px;padding:13px 14px;color:#ffffff;font-size:15px;outline:none;" />
+            </div>
+            <div>
+              <label style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#9fb4d2;letter-spacing:.05em;">MESSAGE</label>
+              <textarea value="{{ msgVal }}" onChange="{{ setMsg }}" rows="4" placeholder="Tell me about your project..." style="width:100%;margin-top:8px;background:#081f3c;border:1px solid #1c3b60;border-radius:10px;padding:13px 14px;color:#ffffff;font-size:15px;outline:none;resize:vertical;"></textarea>
+            </div>
+            <button type="submit" style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:#ffffff;background:{{ accent }};border:none;padding:15px;border-radius:11px;cursor:pointer;margin-top:4px;">Send message →</button>
+          </form>
+        </div>
+        <!-- success -->
+        <div style="display:{{ sentDisplay }};flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#0d2a4f;border:1px solid #1c3b60;border-radius:18px;padding:56px 32px;min-height:360px;">
+          <div style="width:56px;height:56px;border-radius:99px;background:#173f1f;border:1px solid #2a7d3f;display:flex;align-items:center;justify-content:center;margin-bottom:22px;"><span style="color:#4ade80;font-size:26px;">✓</span></div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:22px;margin-bottom:8px;">Message sent!</div>
+          <p style="font-size:15px;color:#9fb4d2;max-width:300px;margin:0 0 26px;line-height:1.55;">Thanks for reaching out — your message is saved in Mikail's dashboard.</p>
+          <button onClick="{{ resetSent }}" style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:#0a2342;background:#ffffff;border:none;padding:12px 24px;border-radius:10px;cursor:pointer;">Send another</button>
+        </div>
+      </div>
+    </div>
+    <div style="max-width:1180px;margin:0 auto;padding:0 40px 56px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #1c3b60;margin-top:8px;padding-top:28px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#5f7ba3;">
+      <span>© 2026 Muhammad Mikail — Backend &amp; AI</span>
+      <button onClick="{{ openDash }}" style="background:none;border:none;color:#7fa3da;font-family:'JetBrains Mono',monospace;font-size:12px;cursor:pointer;">Owner dashboard →</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============================================================= -->
+<!-- =====================  VARIANT B  ============================ -->
+<!-- ============================================================= -->
+<div style="display:{{ showB }};">
+
+  <!-- TOP BAR -->
+  <div style="background:#081d38;color:#9fb4d2;">
+    <div style="max-width:1180px;margin:0 auto;padding:9px 40px;display:flex;justify-content:flex-end;gap:30px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.04em;">
+      <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="315c585a50585d1f030100071f000371565c50585d1f525e5c">[email&#160;protected]</a></span>
+      <span style="color:#3f5d84;">|</span>
+      <span>Open to internships · 2026</span>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav style="position:sticky;top:0;z-index:100;background:#ffffff;border-bottom:1px solid #e8eef6;">
+    <div style="max-width:1180px;margin:0 auto;padding:18px 40px;display:flex;align-items:center;justify-content:space-between;">
+      <a href="#top-b" style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:21px;letter-spacing:-.02em;color:#0a2342;">MIKAIL<span style="color:{{ accent }};">.</span></a>
+      <div style="display:flex;gap:34px;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:500;">
+        <a href="#about-b" style="color:#34507a;">About</a>
+        <a href="#stack-b" style="color:#34507a;">Stack</a>
+        <a href="#timeline-b" style="color:#34507a;">Timeline</a>
+        <a href="#work-b" style="color:#34507a;">Works</a>
+      </div>
+      <a href="#contact-b" style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:#ffffff;background:{{ accent }};padding:11px 22px;border-radius:8px;">Hire me</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header id="top-b" style="background:linear-gradient(135deg,#0a2342 0%,#102f57 100%);color:#ffffff;position:relative;overflow:hidden;">
+    <div style="max-width:1180px;margin:0 auto;padding:96px 40px 150px;position:relative;z-index:2;text-align:center;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:#7fa3da;margin-bottom:22px;">Software Engineering Student · Backend &amp; AI</div>
+      <h1 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(38px,5.6vw,68px);line-height:1.02;letter-spacing:-.03em;margin:0 auto 24px;max-width:900px;">Backend that works.<br>AI that's interesting.</h1>
+      <p style="font-size:19px;line-height:1.6;color:#aebfd9;max-width:580px;margin:0 auto 36px;">I'm Muhammad Mikail — a BINUS Software Engineering student building backend architecture, APIs and microservices, with a steady pull toward AI / ML.</p>
+      <div style="display:flex;gap:14px;justify-content:center;">
+        <a href="#work-b" style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:#0a2342;background:#ffffff;padding:15px 28px;border-radius:10px;">View work</a>
+        <a href="#contact-b" style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:#ffffff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);padding:15px 28px;border-radius:10px;">Get in touch</a>
+      </div>
+    </div>
+    <div style="position:absolute;right:-120px;top:-80px;width:420px;height:420px;border-radius:99px;background:radial-gradient(circle,rgba(27,99,214,.35),transparent 70%);"></div>
+  </header>
+
+  <!-- FOCUS STRIP -->
+  <div style="max-width:1100px;margin:-95px auto 0;padding:0 40px;position:relative;z-index:5;">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:#ffffff;border:1px solid #e3eaf3;border-radius:16px;overflow:hidden;box-shadow:0 30px 60px -34px rgba(10,35,66,.5);">
+      <div style="padding:30px 26px;border-right:1px solid #eef3f9;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#9bb0cd;margin-bottom:10px;">01</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;color:#0a2342;margin-bottom:6px;">Backend APIs</div>
+        <div style="font-size:13px;color:#5b7290;line-height:1.5;">NestJS · Express · REST</div>
+      </div>
+      <div style="padding:30px 26px;background:{{ accent }};color:#ffffff;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#bcd2f5;margin-bottom:10px;">02</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;margin-bottom:6px;">AI / ML</div>
+        <div style="font-size:13px;color:#dbe7fb;line-height:1.5;">scikit-learn · LLMs</div>
+      </div>
+      <div style="padding:30px 26px;border-right:1px solid #eef3f9;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#9bb0cd;margin-bottom:10px;">03</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;color:#0a2342;margin-bottom:6px;">Microservices</div>
+        <div style="font-size:13px;color:#5b7290;line-height:1.5;">Design patterns · SOLID</div>
+      </div>
+      <div style="padding:30px 26px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#9bb0cd;margin-bottom:10px;">04</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;color:#0a2342;margin-bottom:6px;">Databases</div>
+        <div style="font-size:13px;color:#5b7290;line-height:1.5;">PostgreSQL · Supabase</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS STRIP -->
+  <section style="max-width:1180px;margin:0 auto;padding:80px 40px 30px;">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center;">
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:46px;font-weight:700;color:{{ accent }};line-height:1;">3.21</div>
+        <div style="font-size:14px;color:#5b7290;margin-top:8px;">GPA / 4.00</div>
+      </div>
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:46px;font-weight:700;color:{{ accent }};line-height:1;">Top 5</div>
+        <div style="font-size:14px;color:#5b7290;margin-top:8px;">IOFest 2026</div>
+      </div>
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:46px;font-weight:700;color:{{ accent }};line-height:1;">2×</div>
+        <div style="font-size:14px;color:#5b7290;margin-top:8px;">OSN Informatics</div>
+      </div>
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:46px;font-weight:700;color:{{ accent }};line-height:1;">3+</div>
+        <div style="font-size:14px;color:#5b7290;margin-top:8px;">Languages spoken</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about-b" style="max-width:1180px;margin:0 auto;padding:80px 40px;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;">
+    <div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.2em;color:{{ accent }};">ABOUT ME</div>
+      <h2 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:38px;letter-spacing:-.02em;line-height:1.12;margin:16px 0 22px;">A backend engineer-in-training, drawn to AI.</h2>
+      <p style="font-size:17px;line-height:1.75;color:#46607f;margin:0 0 18px;">I like solving real problems by building systems that work, and I kept studying AI and machine learning because pairing the two is where the more interesting solutions live.</p>
+      <p style="font-size:17px;line-height:1.75;color:#46607f;margin:0 0 28px;">I've owned backend architecture, API design and microservices across course and competition projects — and I'm increasingly drawn to larger, multi-service systems.</p>
+      <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;color:#0a2342;">Muhammad Mikail</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#5b7290;">Software Engineering · BINUS University</div>
+    </div>
+    <div style="aspect-ratio:5/4;border-radius:18px;background:repeating-linear-gradient(45deg,#e6edf6 0 14px,#eef3f9 14px 28px);border:1px solid #dde6f1;display:flex;align-items:center;justify-content:center;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#7d93b0;background:#ffffffd9;padding:7px 13px;border-radius:99px;">about-photo.jpg</span>
+    </div>
+  </section>
+
+  <!-- STACK (navy panel) -->
+  <section id="stack-b" style="background:linear-gradient(135deg,#0a2342 0%,#102f57 100%);color:#ffffff;">
+    <div style="max-width:1180px;margin:0 auto;padding:96px 40px;">
+      <h2 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:38px;letter-spacing:-.02em;line-height:1.1;margin:0 0 50px;max-width:440px;">A growing, dependable stack.</h2>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;">
+        <div style="border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:28px 26px;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;margin-bottom:14px;color:#ffffff;">Languages</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;color:#aebfd9;">C++ · Java · Python<br>TS · JS · Dart · SQL</div>
+        </div>
+        <div style="border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:28px 26px;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;margin-bottom:14px;color:#ffffff;">Backend</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;color:#aebfd9;">Node.js · NestJS<br>Express · Prisma · REST</div>
+        </div>
+        <div style="border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:28px 26px;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;margin-bottom:14px;color:#ffffff;">AI / ML</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;color:#aebfd9;">scikit-learn · XGBoost<br>PaddleOCR · Groq · Gemini</div>
+        </div>
+        <div style="border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:28px 26px;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;margin-bottom:14px;color:#ffffff;">Databases &amp; Cloud</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;color:#aebfd9;">PostgreSQL · Supabase<br>MySQL · Railway</div>
+        </div>
+        <div style="border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:28px 26px;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;margin-bottom:14px;color:#ffffff;">Tools</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;color:#aebfd9;">Git · Postman<br>PlantUML · N8N</div>
+        </div>
+        <div style="border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:28px 26px;background:{{ accent }};">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;margin-bottom:14px;color:#ffffff;">Practices</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;color:#dbe7fb;">SOLID · GoF Patterns<br>Refactoring · SDLC</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE + EDUCATION -->
+  <section id="timeline-b" style="max-width:1180px;margin:0 auto;padding:96px 40px;display:grid;grid-template-columns:1.05fr .95fr;gap:72px;">
+    <div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.2em;color:{{ accent }};">EXPERIENCE</div>
+      <h2 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:34px;letter-spacing:-.02em;margin:16px 0 40px;">Highlights</h2>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:22px;background:#fbfcfe;border:1px solid #e3eaf3;border-radius:14px;padding:24px 26px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:{{ accent }};white-space:nowrap;padding-top:3px;">2026</div>
+          <div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:18px;">IOFest 2026 Finalist · 5th place</div>
+            <p style="font-size:14px;color:#5b7290;margin:6px 0 0;line-height:1.55;">Backend developer &amp; proposal writer for a circular-economy waste marketplace. Score 81.78.</p>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:22px;background:#fbfcfe;border:1px solid #e3eaf3;border-radius:14px;padding:24px 26px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:{{ accent }};white-space:nowrap;padding-top:3px;">2024</div>
+          <div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:18px;">Laboratory Assistant Trainee · SLC BINUS</div>
+            <p style="font-size:14px;color:#5b7290;margin:6px 0 0;line-height:1.55;">Pre-training track (Batch 25-1): C++, Java OOP and SQL fundamentals.</p>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:22px;background:#fbfcfe;border:1px solid #e3eaf3;border-radius:14px;padding:24px 26px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:{{ accent }};white-space:nowrap;padding-top:3px;">22–23</div>
+          <div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:18px;">OSN Informatics · 2× Competitor</div>
+            <p style="font-size:14px;color:#5b7290;margin:6px 0 0;line-height:1.55;">National Science Olympiad, representing SMA Negeri 1 Kajen.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="education-b">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.2em;color:{{ accent }};">EDUCATION</div>
+      <h2 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:34px;letter-spacing:-.02em;margin:16px 0 40px;">Education</h2>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="border-left:3px solid {{ accent }};background:#fbfcfe;border-radius:0 14px 14px 0;padding:24px 26px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:{{ accent }};">2024 — PRESENT</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:18px;margin:8px 0 4px;">BINUS University</div>
+          <div style="font-size:14px;color:#5b7290;">Computer Science — Software Engineering · GPA 3.21</div>
+        </div>
+        <div style="border-left:3px solid #cfdaea;background:#fbfcfe;border-radius:0 14px 14px 0;padding:24px 26px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:{{ accent }};">2021 — 2024</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:18px;margin:8px 0 4px;">SMA Negeri 1 Kajen</div>
+          <div style="font-size:14px;color:#5b7290;">Natural Science (IPA)</div>
+        </div>
+        <div style="border-left:3px solid #cfdaea;background:#fbfcfe;border-radius:0 14px 14px 0;padding:24px 26px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:{{ accent }};">LEADERSHIP</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:18px;margin:8px 0 4px;">Organization experience</div>
+          <div style="font-size:14px;color:#5b7290;">Yearbook Committee Chairman &amp; MPK member.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKS CAROUSEL -->
+  <section id="work-b" style="background:#fbfcfe;border-top:1px solid #eef3f9;overflow:hidden;">
+    <div style="max-width:1180px;margin:0 auto;padding:96px 40px;">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:44px;">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.2em;color:{{ accent }};">SELECTED WORKS</div>
+          <h2 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:34px;letter-spacing:-.02em;margin:16px 0 0;">Projects</h2>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button onClick="{{ prev }}" style="width:46px;height:46px;border-radius:10px;border:1px solid #dde6f1;background:#ffffff;cursor:pointer;font-size:18px;color:#0a2342;">←</button>
+          <button onClick="{{ next }}" style="width:46px;height:46px;border-radius:10px;border:none;background:{{ accent }};cursor:pointer;font-size:18px;color:#ffffff;">→</button>
+        </div>
+      </div>
+      <div style="overflow:visible;">
+        <div style="display:flex;gap:24px;transition:transform .55s cubic-bezier(.4,0,.1,1);transform:{{ trackShift }};">
+          <article style="flex:0 0 78%;background:#ffffff;border:1px solid #dde6f1;border-radius:16px;overflow:hidden;box-shadow:0 24px 50px -34px rgba(10,35,66,.5);">
+            <div style="aspect-ratio:16/9;background:repeating-linear-gradient(45deg,#dbe4f0 0 14px,#e8eef6 14px 28px);display:flex;align-items:center;justify-content:center;position:relative;">
+              <span style="position:absolute;top:16px;left:16px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#ffffff;background:{{ accent }};padding:6px 12px;border-radius:6px;">MARKETPLACE · BACKEND</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#7d93b0;background:#ffffffd9;padding:7px 13px;border-radius:99px;">project-01.jpg</span>
+            </div>
+            <div style="padding:26px 30px 30px;">
+              <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:25px;margin:0 0 10px;letter-spacing:-.01em;">Circular-Economy Waste Marketplace</h3>
+              <p style="font-size:15px;line-height:1.6;color:#5b7290;margin:0 0 18px;">IOFest 2026 finalist. Backend architecture &amp; API design for a waste-to-recycler marketplace.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:7px;padding:6px 11px;">NestJS</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:7px;padding:6px 11px;">Prisma</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:7px;padding:6px 11px;">PostgreSQL</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:7px;padding:6px 11px;">Supabase</span>
+              </div>
+            </div>
+          </article>
+          <article style="flex:0 0 78%;background:#ffffff;border:1px solid #dde6f1;border-radius:16px;overflow:hidden;box-shadow:0 24px 50px -34px rgba(10,35,66,.5);">
+            <div style="aspect-ratio:16/9;background:repeating-linear-gradient(45deg,#dbe4f0 0 14px,#e8eef6 14px 28px);display:flex;align-items:center;justify-content:center;position:relative;">
+              <span style="position:absolute;top:16px;left:16px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#ffffff;background:{{ accent }};padding:6px 12px;border-radius:6px;">AI · OCR PIPELINE</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#7d93b0;background:#ffffffd9;padding:7px 13px;border-radius:99px;">project-02.jpg</span>
+            </div>
+            <div style="padding:26px 30px 30px;">
+              <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:25px;margin:0 0 10px;letter-spacing:-.01em;">Document OCR Pipeline</h3>
+              <p style="font-size:15px;line-height:1.6;color:#5b7290;margin:0 0 18px;">PaddleOCR + LLM clean-up served through a simple Streamlit interface.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:7px;padding:6px 11px;">Python</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:7px;padding:6px 11px;">PaddleOCR</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:7px;padding:6px 11px;">Gemini</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:7px;padding:6px 11px;">Streamlit</span>
+              </div>
+            </div>
+          </article>
+          <article style="flex:0 0 78%;background:#ffffff;border:1px solid #dde6f1;border-radius:16px;overflow:hidden;box-shadow:0 24px 50px -34px rgba(10,35,66,.5);">
+            <div style="aspect-ratio:16/9;background:repeating-linear-gradient(45deg,#dbe4f0 0 14px,#e8eef6 14px 28px);display:flex;align-items:center;justify-content:center;position:relative;">
+              <span style="position:absolute;top:16px;left:16px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#ffffff;background:{{ accent }};padding:6px 12px;border-radius:6px;">ML · CLASSIFICATION</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#7d93b0;background:#ffffffd9;padding:7px 13px;border-radius:99px;">project-03.jpg</span>
+            </div>
+            <div style="padding:26px 30px 30px;">
+              <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:25px;margin:0 0 10px;letter-spacing:-.01em;">ML Classification Service</h3>
+              <p style="font-size:15px;line-height:1.6;color:#5b7290;margin:0 0 18px;">Tabular classification API comparing Random Forest, XGBoost and Logistic Regression.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:7px;padding:6px 11px;">scikit-learn</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:7px;padding:6px 11px;">XGBoost</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:7px;padding:6px 11px;">Python</span>
+              </div>
+            </div>
+          </article>
+          <article style="flex:0 0 78%;background:#ffffff;border:1px solid #dde6f1;border-radius:16px;overflow:hidden;box-shadow:0 24px 50px -34px rgba(10,35,66,.5);">
+            <div style="aspect-ratio:16/9;background:repeating-linear-gradient(45deg,#dbe4f0 0 14px,#e8eef6 14px 28px);display:flex;align-items:center;justify-content:center;position:relative;">
+              <span style="position:absolute;top:16px;left:16px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#ffffff;background:{{ accent }};padding:6px 12px;border-radius:6px;">PLATFORM · BACKEND</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#7d93b0;background:#ffffffd9;padding:7px 13px;border-radius:99px;">project-04.jpg</span>
+            </div>
+            <div style="padding:26px 30px 30px;">
+              <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:25px;margin:0 0 10px;letter-spacing:-.01em;">REST API Microservices</h3>
+              <p style="font-size:15px;line-height:1.6;color:#5b7290;margin:0 0 18px;">Express services with shared auth and a Prisma data layer, built around SOLID &amp; GoF.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:7px;padding:6px 11px;">Node.js</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:7px;padding:6px 11px;">Express</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:7px;padding:6px 11px;">Prisma</span>
+              </div>
+            </div>
+          </article>
+          <article style="flex:0 0 78%;background:#ffffff;border:1px solid #dde6f1;border-radius:16px;overflow:hidden;box-shadow:0 24px 50px -34px rgba(10,35,66,.5);">
+            <div style="aspect-ratio:16/9;background:repeating-linear-gradient(45deg,#dbe4f0 0 14px,#e8eef6 14px 28px);display:flex;align-items:center;justify-content:center;position:relative;">
+              <span style="position:absolute;top:16px;left:16px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#ffffff;background:{{ accent }};padding:6px 12px;border-radius:6px;">AUTOMATION · AI</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#7d93b0;background:#ffffffd9;padding:7px 13px;border-radius:99px;">project-05.jpg</span>
+            </div>
+            <div style="padding:26px 30px 30px;">
+              <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:25px;margin:0 0 10px;letter-spacing:-.01em;">AI Automation Workflows</h3>
+              <p style="font-size:15px;line-height:1.6;color:#5b7290;margin:0 0 18px;">N8N workflows wiring Groq and Gemini, deployed on Railway and Hugging Face Spaces.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:7px;padding:6px 11px;">N8N</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:7px;padding:6px 11px;">Groq</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#41587a;background:#f4f8fc;border:1px solid #e3eaf3;border-radius:7px;padding:6px 11px;">Railway</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:center;gap:9px;margin-top:38px;">
+        <sc-for list="{{ dots }}" as="dot" hint-placeholder-count="5">
+          <button onClick="{{ dot.onClick }}" style="{{ dot.style }}"></button>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT / FOOTER -->
+  <section id="contact-b" style="background:#081d38;color:#ffffff;">
+    <div style="max-width:1180px;margin:0 auto;padding:96px 40px 48px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;padding-bottom:64px;border-bottom:1px solid #1c3b60;">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.2em;color:#7fa3da;">CONTACT ME</div>
+          <h2 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(32px,4vw,46px);letter-spacing:-.03em;line-height:1.06;margin:16px 0 16px;">Let's work together.</h2>
+          <p style="font-size:17px;color:#9fb4d2;max-width:420px;margin:0 0 30px;line-height:1.6;">Send a message — it lands straight in my private dashboard.</p>
+          <div style="display:flex;flex-direction:column;gap:14px;font-family:'JetBrains Mono',monospace;font-size:14px;">
+            <a href="/cdn-cgi/l/email-protection#acc1c5c7cdc5c0829e9c9d9a829d9eeccbc1cdc5c082cfc3c1" style="color:#dbe7fb;"><span class="__cf_email__" data-cfemail="c3aeaaa8a2aaafedf1f3f2f5edf2f183a4aea2aaafeda0acae">[email&#160;protected]</span></a>
+            <a href="https://github.com/MikailMuh" style="color:#dbe7fb;">github.com/MikailMuh</a>
+          </div>
+        </div>
+        <div>
+          <div style="display:{{ formDisplay }};">
+            <form onSubmit="{{ submitForm }}" style="display:flex;flex-direction:column;gap:14px;background:#0d2a4f;border:1px solid #1c3b60;border-radius:16px;padding:28px;">
+              <input value="{{ nameVal }}" onChange="{{ setName }}" placeholder="Your name" style="background:#081f3c;border:1px solid #1c3b60;border-radius:10px;padding:13px 14px;color:#ffffff;font-size:15px;outline:none;" />
+              <input value="{{ emailVal }}" onChange="{{ setEmail }}" type="email" placeholder="Email" style="background:#081f3c;border:1px solid #1c3b60;border-radius:10px;padding:13px 14px;color:#ffffff;font-size:15px;outline:none;" />
+              <textarea value="{{ msgVal }}" onChange="{{ setMsg }}" rows="3" placeholder="Message" style="background:#081f3c;border:1px solid #1c3b60;border-radius:10px;padding:13px 14px;color:#ffffff;font-size:15px;outline:none;resize:vertical;"></textarea>
+              <button type="submit" style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:#ffffff;background:{{ accent }};border:none;padding:14px;border-radius:10px;cursor:pointer;">Send message →</button>
+            </form>
+          </div>
+          <div style="display:{{ sentDisplay }};flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#0d2a4f;border:1px solid #1c3b60;border-radius:16px;padding:44px 28px;">
+            <div style="width:50px;height:50px;border-radius:99px;background:#173f1f;border:1px solid #2a7d3f;display:flex;align-items:center;justify-content:center;margin-bottom:18px;"><span style="color:#4ade80;font-size:24px;">✓</span></div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:20px;margin-bottom:6px;">Message sent!</div>
+            <p style="font-size:14px;color:#9fb4d2;margin:0 0 22px;">Saved to the dashboard.</p>
+            <button onClick="{{ resetSent }}" style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:#0a2342;background:#ffffff;border:none;padding:11px 22px;border-radius:9px;cursor:pointer;">Send another</button>
+          </div>
+        </div>
+      </div>
+      <div style="padding-top:28px;display:flex;justify-content:space-between;align-items:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:#5f7ba3;">
+        <span>© 2026 Muhammad Mikail · Backend &amp; AI</span>
+        <button onClick="{{ openDash }}" style="background:none;border:none;color:#7fa3da;font-family:'JetBrains Mono',monospace;font-size:12px;cursor:pointer;">Owner dashboard →</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============================================================= -->
+<!-- =====================  DASHBOARD OVERLAY  =================== -->
+<!-- ============================================================= -->
+<div style="position:fixed;inset:0;z-index:400;background:#06182f;display:{{ dashDisplay }};flex-direction:column;font-family:'Hanken Grotesk',sans-serif;animation:fadeIn .25s ease;">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 32px;border-bottom:1px solid #16304f;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span style="display:block;width:13px;height:11px;border:2px solid #7fa3da;border-radius:3px;position:relative;margin-top:5px;"><span style="position:absolute;left:50%;top:-7px;transform:translateX(-50%);width:9px;height:9px;border:2px solid #7fa3da;border-bottom:none;border-radius:6px 6px 0 0;"></span></span>
+      <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;color:#ffffff;">Owner Dashboard</span>
+    </div>
+    <button onClick="{{ closeDash }}" style="background:none;border:1px solid #16304f;color:#9fb4d2;font-family:'JetBrains Mono',monospace;font-size:13px;padding:9px 16px;border-radius:9px;cursor:pointer;">← Back to site</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div style="display:{{ loginDisplay }};flex:1;align-items:center;justify-content:center;">
+    <form onSubmit="{{ tryAuth }}" style="width:360px;background:#0b2440;border:1px solid #16304f;border-radius:18px;padding:36px 34px;text-align:center;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.2em;color:#7fa3da;margin-bottom:10px;">PRIVATE ACCESS</div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:22px;color:#ffffff;margin-bottom:6px;">Enter your password</div>
+      <p style="font-size:14px;color:#7891b5;margin:0 0 24px;line-height:1.5;">Only the owner can read incoming messages.</p>
+      <input value="{{ pwVal }}" onChange="{{ setPw }}" type="password" placeholder="Password" style="width:100%;background:#081f3c;border:1px solid #1c3b60;border-radius:10px;padding:14px;color:#ffffff;font-size:15px;outline:none;text-align:center;" />
+      <div style="display:{{ pwErrDisplay }};color:#f87171;font-size:13px;margin-top:12px;">Wrong password. Try again.</div>
+      <button type="submit" style="width:100%;margin-top:20px;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:#ffffff;background:{{ accent }};border:none;padding:14px;border-radius:11px;cursor:pointer;">Unlock dashboard</button>
+    </form>
+  </div>
+
+  <!-- PANEL -->
+  <div style="display:{{ panelDisplay }};flex:1;overflow:auto;padding:36px 32px;">
+    <div style="max-width:760px;margin:0 auto;">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:28px;">
+        <h2 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:26px;color:#ffffff;margin:0;">Inbox</h2>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#7891b5;">{{ msgCount }} total · {{ unread }} new</span>
+      </div>
+      <div style="display:{{ emptyDisplay }};text-align:center;color:#5f7ba3;padding:80px 20px;border:1px dashed #16304f;border-radius:16px;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:18px;color:#9fb4d2;margin-bottom:8px;">No messages yet</div>
+        <div style="font-size:14px;">Messages from the contact form will appear here.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <sc-for list="{{ messages }}" as="m" hint-placeholder-count="2">
+          <div style="{{ m.cardStyle }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;color:#ffffff;">{{ m.name }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;color:#ffffff;background:{{ m.badgeBg }};padding:3px 8px;border-radius:5px;">{{ m.statusLabel }}</span>
+              </div>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5f7ba3;">{{ m.when }}</span>
+            </div>
+            <a href="/cdn-cgi/l/email-protection#413a3a612c6f242c20282d613c3c" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#7fa3da;">{{ m.email }}</a>
+            <p style="font-size:15px;color:#cdd9ea;line-height:1.6;margin:12px 0 16px;">{{ m.message }}</p>
+            <div style="display:flex;gap:10px;">
+              <button onClick="{{ m.toggle }}" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#9fb4d2;background:none;border:1px solid #1c3b60;padding:7px 14px;border-radius:8px;cursor:pointer;">{{ m.readLabel }}</button>
+              <button onClick="{{ m.del }}" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#f87171;background:none;border:1px solid #3a2230;padding:7px 14px;border-radius:8px;cursor:pointer;">Delete</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</x-dc>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#1b63d6&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;dashboardPassword&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;mikail2026&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = {
+    proj: 0, variant: 'a', view: 'site', authed: false, pw: '', pwErr: false,
+    form: { name: '', email: '', message: '' }, sent: false, messages: []
+  };
+  componentDidMount(){
+    try { const m = JSON.parse(localStorage.getItem('mikail_inbox') || '[]'); if (Array.isArray(m)) this.setState({ messages: m }); } catch(e){}
+  }
+  go(i){ const n = 5; this.setState({ proj: Math.max(0, Math.min(n - 1, i)) }); }
+  setField(k, v){ this.setState(s => ({ form: { ...s.form, [k]: v } })); }
+  persist(messages){ try { localStorage.setItem('mikail_inbox', JSON.stringify(messages)); } catch(e){} }
+  submitForm(e){
+    if (e && e.preventDefault) e.preventDefault();
+    const f = this.state.form;
+    if (!f.name.trim() || !f.email.trim() || !f.message.trim()) return;
+    const msg = { id: Date.now(), name: f.name.trim(), email: f.email.trim(), message: f.message.trim(), ts: new Date().toISOString(), read: false };
+    const messages = [msg, ...this.state.messages];
+    this.persist(messages);
+    this.setState({ messages, sent: true, form: { name: '', email: '', message: '' } });
+  }
+  tryAuth(e){
+    if (e && e.preventDefault) e.preventDefault();
+    const pass = this.props.dashboardPassword ?? 'mikail2026';
+    if (this.state.pw === pass) this.setState({ authed: true, pwErr: false });
+    else this.setState({ pwErr: true });
+  }
+  delMsg(id){ const messages = this.state.messages.filter(m => m.id !== id); this.persist(messages); this.setState({ messages }); }
+  toggleRead(id){ const messages = this.state.messages.map(m => m.id === id ? { ...m, read: !m.read } : m); this.persist(messages); this.setState({ messages }); }
+  renderVals(){
+    const accent = this.props.accentColor ?? '#1b63d6';
+    const n = 5, i = this.state.proj;
+    const trackShift = `translateX(calc(-${i} * (78% + 24px)))`;
+    const dots = Array.from({ length: n }).map((_, k) => ({
+      onClick: () => this.go(k),
+      style: { width: k === i ? '30px' : '9px', height: '9px', borderRadius: '99px', border: 'none', cursor: 'pointer', padding: 0, transition: 'all .35s', background: k === i ? accent : '#c5d2e2' }
+    }));
+    const a = this.state.variant === 'a';
+    const dash = this.state.view === 'dashboard';
+    const unread = this.state.messages.filter(m => !m.read).length;
+    const messages = this.state.messages.map(m => ({
+      ...m,
+      when: new Date(m.ts).toLocaleString(),
+      readLabel: m.read ? 'Mark unread' : 'Mark read',
+      statusLabel: m.read ? 'READ' : 'NEW',
+      badgeBg: m.read ? '#3a5170' : accent,
+      toggle: () => this.toggleRead(m.id),
+      del: () => this.delMsg(m.id),
+      cardStyle: { background: '#0b2440', border: '1px solid #16304f', borderLeft: m.read ? '3px solid #16304f' : ('3px solid ' + accent), borderRadius: '12px', padding: '20px 22px' }
+    }));
+    return {
+      accent, trackShift, dots,
+      prev: () => this.go(i - 1), next: () => this.go(i + 1),
+      showA: a ? 'block' : 'none', showB: a ? 'none' : 'block',
+      setA: () => this.setState({ variant: 'a' }), setB: () => this.setState({ variant: 'b' }),
+      switchABg: a ? '#0a2342' : 'transparent', switchAColor: a ? '#ffffff' : '#5b7290',
+      switchBBg: a ? 'transparent' : '#0a2342', switchBColor: a ? '#5b7290' : '#ffffff',
+      dashDisplay: dash ? 'flex' : 'none',
+      loginDisplay: dash && !this.state.authed ? 'flex' : 'none',
+      panelDisplay: dash && this.state.authed ? 'block' : 'none',
+      openDash: () => this.setState({ view: 'dashboard' }),
+      closeDash: () => this.setState({ view: 'site', authed: false, pw: '', pwErr: false }),
+      pwVal: this.state.pw, setPw: (e) => this.setState({ pw: e.target.value }),
+      tryAuth: (e) => this.tryAuth(e),
+      pwErrDisplay: this.state.pwErr ? 'block' : 'none',
+      messages, msgCount: this.state.messages.length, unread,
+      emptyDisplay: this.state.messages.length === 0 ? 'block' : 'none',
+      nameVal: this.state.form.name, emailVal: this.state.form.email, msgVal: this.state.form.message,
+      setName: (e) => this.setField('name', e.target.value),
+      setEmail: (e) => this.setField('email', e.target.value),
+      setMsg: (e) => this.setField('message', e.target.value),
+      submitForm: (e) => this.submitForm(e),
+      sentDisplay: this.state.sent ? 'flex' : 'none',
+      formDisplay: this.state.sent ? 'none' : 'block',
+      resetSent: () => this.setState({ sent: false })
+    };
+  }
+}
+</script>
+</body>
+</html>
