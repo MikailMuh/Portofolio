@@ -138,17 +138,28 @@ export default function VariantA(props: SiteProps) {
     if (scrollerRef.current) setProj(nearestIndex(scrollerRef.current));
   };
 
+  const DRAG_THRESHOLD = 6;
+
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (e.pointerType !== "mouse") return; // let touch/pen scroll natively
+    if (e.pointerType !== "mouse") return;
     const scroller = scrollerRef.current;
     if (!scroller) return;
-    drag.current = { active: true, startX: e.clientX, startLeft: scroller.scrollLeft };
-    scroller.setPointerCapture(e.pointerId);
+    // Don't capture yet — wait until the pointer actually moves past the threshold
+    // so that clicks on child anchors still fire normally.
+    drag.current = { active: false, startX: e.clientX, startLeft: scroller.scrollLeft };
   };
 
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!drag.current.active || !scrollerRef.current) return;
-    scrollerRef.current.scrollLeft = drag.current.startLeft - (e.clientX - drag.current.startX);
+    if (e.pointerType !== "mouse" || e.buttons === 0) return;
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    const dx = Math.abs(e.clientX - drag.current.startX);
+    if (!drag.current.active) {
+      if (dx < DRAG_THRESHOLD) return;
+      drag.current.active = true;
+      scroller.setPointerCapture(e.pointerId);
+    }
+    scroller.scrollLeft = drag.current.startLeft - (e.clientX - drag.current.startX);
   };
 
   const endDrag = (e: React.PointerEvent<HTMLDivElement>) => {

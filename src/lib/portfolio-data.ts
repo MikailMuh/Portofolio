@@ -88,4 +88,3 @@ export type InboxMessage = {
   read: boolean;
 };
 
-export const INBOX_STORAGE_KEY = "mikail_inbox";

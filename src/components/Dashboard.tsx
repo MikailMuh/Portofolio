@@ -13,8 +13,8 @@ type DashboardProps = {
   tryAuth: (e: React.FormEvent) => void;
   closeDash: () => void;
   messages: InboxMessage[];
-  toggleRead: (id: number) => void;
-  delMsg: (id: number) => void;
+  toggleRead: (id: number) => void | Promise<void>;
+  delMsg: (id: number) => void | Promise<void>;
 };
 
 export default function Dashboard({

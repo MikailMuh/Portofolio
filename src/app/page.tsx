@@ -2,12 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import {
-  ACCENT,
-  DASHBOARD_PASSWORD,
-  INBOX_STORAGE_KEY,
-  InboxMessage,
-} from "@/lib/portfolio-data";
+import { ACCENT, DASHBOARD_PASSWORD, InboxMessage } from "@/lib/portfolio-data";
+import { supabase } from "@/lib/supabase";
 import VariantA from "@/components/VariantA";
 import Dashboard from "@/components/Dashboard";
 
@@ -18,7 +14,7 @@ export type SiteProps = {
   // contact form
   form: FormState;
   setField: (k: keyof FormState, v: string) => void;
-  submitForm: (e: React.FormEvent) => void;
+  submitForm: (e: React.FormEvent) => void | Promise<void>;
   sent: boolean;
   resetSent: () => void;
   // dashboard
@@ -35,40 +31,33 @@ export default function Home() {
   const [messages, setMessages] = useState<InboxMessage[]>([]);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(INBOX_STORAGE_KEY);
-      const parsed = JSON.parse(raw || "[]");
-      if (Array.isArray(parsed)) setMessages(parsed);
-    } catch {
-      /* ignore corrupt storage */
-    }
+    supabase
+      .from("inbox_messages")
+      .select("*")
+      .order("ts", { ascending: false })
+      .then(({ data }) => {
+        if (data) setMessages(data as InboxMessage[]);
+      });
   }, []);
-
-  const persist = (next: InboxMessage[]) => {
-    try {
-      localStorage.setItem(INBOX_STORAGE_KEY, JSON.stringify(next));
-    } catch {
-      /* ignore */
-    }
-  };
 
   const setField = (k: keyof FormState, v: string) =>
     setForm((s) => ({ ...s, [k]: v }));
 
-  const submitForm = (e: React.FormEvent) => {
+  const submitForm = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim() || !form.message.trim()) return;
-    const msg: InboxMessage = {
-      id: Date.now(),
-      name: form.name.trim(),
-      email: form.email.trim(),
-      message: form.message.trim(),
-      ts: new Date().toISOString(),
-      read: false,
-    };
-    const next = [msg, ...messages];
-    setMessages(next);
-    persist(next);
+    const { data, error } = await supabase
+      .from("inbox_messages")
+      .insert({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        message: form.message.trim(),
+        read: false,
+      })
+      .select()
+      .single();
+    if (error || !data) return;
+    setMessages((prev) => [data as InboxMessage, ...prev]);
     setSent(true);
     setForm({ name: "", email: "", message: "" });
   };
@@ -83,18 +72,19 @@ export default function Home() {
     }
   };
 
-  const delMsg = (id: number) => {
-    const next = messages.filter((m) => m.id !== id);
-    setMessages(next);
-    persist(next);
+  const delMsg = async (id: number) => {
+    await supabase.from("inbox_messages").delete().eq("id", id);
+    setMessages((prev) => prev.filter((m) => m.id !== id));
   };
 
-  const toggleRead = (id: number) => {
-    const next = messages.map((m) =>
-      m.id === id ? { ...m, read: !m.read } : m
+  const toggleRead = async (id: number) => {
+    const msg = messages.find((m) => m.id === id);
+    if (!msg) return;
+    const newRead = !msg.read;
+    await supabase.from("inbox_messages").update({ read: newRead }).eq("id", id);
+    setMessages((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, read: newRead } : m))
     );
-    setMessages(next);
-    persist(next);
   };
 
   const openDash = () => setView("dashboard");
