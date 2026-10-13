@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { ACCENT, DASHBOARD_PASSWORD, InboxMessage } from "@/lib/portfolio-data";
 import { supabase } from "@/lib/supabase";
 import VariantA from "@/components/VariantA";
@@ -106,57 +105,14 @@ export default function Home() {
   };
 
   return (
-    <div style={{ fontFamily: "var(--font-hanken), sans-serif", color: "#0a2342", background: "#ffffff" }}>
+    <>
       {/* ============ OWNER LOCK BUTTON ============ */}
-      <motion.button
-        onClick={openDash}
-        title="Owner dashboard"
-        whileHover={{ scale: 1.08, boxShadow: "0 16px 36px -14px rgba(10,35,66,.6)" }}
-        whileTap={{ scale: 0.92 }}
-        transition={{ type: "spring", stiffness: 400, damping: 22 }}
-        style={{
-          position: "fixed",
-          bottom: 24,
-          right: 24,
-          zIndex: 300,
-          width: 46,
-          height: 46,
-          borderRadius: 99,
-          border: "1px solid #dde6f1",
-          background: "#ffffff",
-          cursor: "pointer",
-          boxShadow: "0 12px 30px -14px rgba(10,35,66,.5)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <span
-          style={{
-            display: "block",
-            width: 13,
-            height: 11,
-            border: "2px solid #0a2342",
-            borderRadius: 3,
-            position: "relative",
-            marginTop: 5,
-          }}
-        >
-          <span
-            style={{
-              position: "absolute",
-              left: "50%",
-              top: -7,
-              transform: "translateX(-50%)",
-              width: 9,
-              height: 9,
-              border: "2px solid #0a2342",
-              borderBottom: "none",
-              borderRadius: "6px 6px 0 0",
-            }}
-          />
-        </span>
-      </motion.button>
+      <button type="button" onClick={openDash} title="Owner dashboard" aria-label="Owner dashboard" className="lock">
+        <svg width="14" height="16" viewBox="0 0 14 16" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
+          <rect x="1" y="7" width="12" height="8" />
+          <path d="M3.5 7V4.5a3.5 3.5 0 0 1 7 0V7" />
+        </svg>
+      </button>
 
       <VariantA {...siteProps} />
 
@@ -173,6 +129,6 @@ export default function Home() {
         toggleRead={toggleRead}
         delMsg={delMsg}
       />
-    </div>
+    </>
   );
 }

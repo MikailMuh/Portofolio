@@ -1,483 +1,520 @@
 "use client";
 
-import { useRef, useState, type CSSProperties } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState, type ReactNode } from "react";
 import {
-  CONTACT_EMAIL,
-  FONT_MONO,
-  FONT_SPACE,
-  PROJECTS,
-} from "@/lib/portfolio-data";
+  MotionConfig,
+  motion,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+} from "framer-motion";
+import { CONTACT_EMAIL, PROJECTS } from "@/lib/portfolio-data";
 import type { SiteProps } from "@/app/page";
+import {
+  Prompt,
+  PromptPrefix,
+  ShellContext,
+  ShellToggle,
+  WinControls,
+  type Cmd,
+  type ShellKind,
+} from "@/components/lab/Shell";
+import Board from "@/components/lab/Board";
+import Experiments from "@/components/lab/Experiments";
 
-const chipStyle: CSSProperties = {
-  fontFamily: FONT_MONO,
-  fontSize: 13,
-  color: "#41587a",
-  background: "#f4f8fc",
-  border: "1px solid #e3eaf3",
-  borderRadius: 8,
-  padding: "7px 13px",
-};
+/* ------------------------------------------------------------------ data */
 
-const cardChipStyle: CSSProperties = { ...chipStyle, fontSize: 12, padding: "6px 12px" };
-
-const placeholderLabel: CSSProperties = {
-  fontFamily: FONT_MONO,
-  fontSize: 12,
-  color: "#7d93b0",
-  background: "#ffffffd9",
-  padding: "7px 13px",
-  borderRadius: 99,
-};
-
-const stripe = "repeating-linear-gradient(45deg,#e6edf6 0 14px,#eef3f9 14px 28px)";
-
-const eyebrow: CSSProperties = {
-  fontFamily: FONT_MONO,
-  fontSize: 12,
-  letterSpacing: ".2em",
-  color: "#1b63d6",
-};
-
-const h2: CSSProperties = {
-  fontFamily: FONT_SPACE,
-  fontWeight: 600,
-  fontSize: 34,
-  letterSpacing: "-.02em",
-};
-
-// Shared spring used for the button hover/tap micro-interactions.
-const btnSpring = { type: "spring" as const, stiffness: 400, damping: 22 };
-
-const skillGroups: { title: string; items: string[] }[] = [
-  { title: "Programming Languages", items: ["C++", "Java", "Python", "JavaScript", "TypeScript", "Dart", "SQL", "HTML", "CSS"] },
-  { title: "Backend & Frameworks", items: ["Node.js", "NestJS", "Express.js", "Prisma", "REST API design", "Microservices"] },
-  { title: "AI / Machine Learning", items: ["Python (scikit-learn)", "Random Forest", "XGBoost", "Logistic Regression", "PaddleOCR", "Groq", "Google Gemini", "Streamlit", "N8N"] },
-  { title: "Databases, Cloud & Tools", items: ["PostgreSQL", "Supabase", "MySQL", "Railway", "Hugging Face Spaces", "Git / GitHub", "Postman", "PlantUML"] },
-  { title: "Practices & Soft Skills", items: ["Design Patterns (GoF)", "SOLID", "Refactoring", "SDLC", "Backend architecture", "API development", "Technical documentation"] },
-  { title: "Frontend & Languages", items: ["Flutter", "React.js", "Indonesian (Native)", "English (Advanced)"] },
+const sections = [
+  { id: "about", label: "about" },
+  { id: "stack", label: "isa" },
+  { id: "trace", label: "trace" },
+  { id: "work", label: "experiments" },
+  { id: "contact", label: "syscall" },
 ];
 
-const timeline = [
-  {
-    dotActive: true,
-    period: "MAY — JUN 2026",
-    title: "IOFest 2026 Finalist · 5th place",
-    body: "Final-round finalist (score 81.78). Backend developer and proposal writer for a circular-economy waste marketplace (UNTAR BEM FTI).",
-  },
-  {
-    dotActive: false,
-    period: "SEP — NOV 2024",
-    title: "Laboratory Assistant Trainee · SLC BINUS",
-    body: "Selected into the SLC pre-training track preparing the 2024 assistant cohort. Built C++ algorithms/data structures, Java OOP end-to-end, and practiced SQL/relational database fundamentals.",
-  },
-  {
-    dotActive: false,
-    period: "2022 — 2023",
-    title: "National Science Olympiad (OSN) · Informatics",
-    body: "Two-time competitor representing SMA Negeri 1 Kajen.",
-  },
-  {
-    dotActive: false,
-    period: "JUL 2023",
-    title: "English Debate Competition · Winner",
-    body: "Winner of English Debate Competition Region Kabupaten Pekalongan and Pre-Province round.",
-  },
+const CMDS: Record<string, Cmd> = {
+  whoami: { ps: "whoami /all", cmd: "whoami /all" },
+  about: { ps: "Get-Content .\about.md", cmd: "type about.md" },
+  stack: { ps: "Get-Command -Module mikail", cmd: "help | more" },
+  trace: { ps: "Get-History -Count 7", cmd: "doskey /history" },
+  work: { ps: "Get-ChildItem .\experiments | Sort-Object Year -Descending", cmd: "dir experiments /o-d" },
+  contact: { ps: "Send-Message -To mikail", cmd: "start mailto:mikail" },
+};
+
+const isa: { mn: string; desc: string; items: string[] }[] = [
+  { mn: "SRV", desc: "backend", items: ["Node.js", "NestJS", "Express.js", "Prisma", "REST APIs", "Microservices"] },
+  { mn: "ML", desc: "AI / ML", items: ["scikit-learn", "XGBoost", "Random Forest", "PaddleOCR", "Groq", "Gemini", "Streamlit", "N8N"] },
+  { mn: "STOR", desc: "data & cloud", items: ["PostgreSQL", "Supabase", "MySQL", "Railway", "Hugging Face", "Docker"] },
+  { mn: "LANG", desc: "languages", items: ["TypeScript", "JavaScript", "Python", "Java", "C++", "Dart", "SQL"] },
+  { mn: "PRAC", desc: "practices", items: ["Design Patterns", "SOLID", "Refactoring", "Clean Architecture", "SDLC"] },
+  { mn: "UI", desc: "frontend", items: ["React", "Flutter", "HTML / CSS"] },
 ];
 
-const education = [
-  {
-    period: "SEP 2024 — PRESENT",
-    title: "BINUS University",
-    body: "Computer Science — Software Engineering · GPA 3.21 / 4.00. Coursework: Software Architecture, Code Reengineering, Mobile/Hybrid Dev, Computational Biology, Research Methodology. Focus: backend engineering, software design patterns, and AI / ML integration.",
-  },
-  {
-    period: "JUL 2021 — MAY 2024",
-    title: "SMA Negeri 1 Kajen",
-    body: "Natural Science (IPA)",
-  },
-  {
-    period: "ORGANIZATION",
-    title: "Yearbook Committee & MPK Student Council",
-    body: "Chairman of the Yearbook Committee (led committee, coordinated team and timeline) and Member of the Student Representative Council (MPK) at SMA Negeri 1 Kajen.",
-  },
-];
+const TICKER_TEXT = "BACKEND · AI · SYSTEMS THAT ACTUALLY WORK · ";
+
+/* --------------------------------------------------------------- helpers */
+
+const hex = (n: number, w = 4) => "0x" + n.toString(16).toUpperCase().padStart(w, "0");
+const bin = (n: number, w = 3) => n.toString(2).padStart(w, "0");
+const opcode = (s: string) =>
+  Array.from(s.slice(0, 2))
+    .map((c) => c.charCodeAt(0).toString(16).toUpperCase())
+    .join(" ");
+
+/** Name that boots up from bits: each glyph flickers 0/1 before locking in. */
+function useDecode(text: string, startDelay = 250) {
+  const reduce = useReducedMotion();
+  // Deterministic first frame so server and client markup match.
+  const [out, setOut] = useState(() =>
+    Array.from(text).map((c, i) => (c === " " ? " " : i % 3 === 0 ? "1" : "0")).join("")
+  );
+
+  useEffect(() => {
+    if (reduce) return;
+    let frame = 0;
+    let id: ReturnType<typeof setInterval> | undefined;
+    const t = setTimeout(() => {
+      id = setInterval(() => {
+        frame++;
+        const locked = Math.floor(frame / 2);
+        setOut(
+          Array.from(text)
+            .map((c, i) => (c === " " || i < locked ? c : Math.random() > 0.5 ? "1" : "0"))
+            .join("")
+        );
+        if (locked >= text.length && id) clearInterval(id);
+      }, 38);
+    }, startDelay);
+    return () => {
+      clearTimeout(t);
+      if (id) clearInterval(id);
+    };
+  }, [text, startDelay, reduce]);
+
+  return reduce ? text : out;
+}
+
+function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.6, delay, ease: [0.2, 0.7, 0.2, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function SectionHead({ cmd, children }: { cmd: Cmd; children: ReactNode }) {
+  return (
+    <Reveal>
+      <Prompt cmd={cmd} className="sh-head" />
+      <h2 className="sh-title">{children}</h2>
+    </Reveal>
+  );
+}
+
+/* ------------------------------------------------------------- component */
 
 export default function VariantA(props: SiteProps) {
-  const { accent, form, setField, submitForm, sent, resetSent, openDash } = props;
+  const { form, setField, submitForm, sent, resetSent, openDash } = props;
 
-  // ---- Works carousel: native horizontal scroll (touchpad / touch / wheel) ----
-  const scrollerRef = useRef<HTMLDivElement>(null);
-  const [proj, setProj] = useState(0);
-  // Mouse drag-to-scroll state (touchpad & touch use native scrolling).
-  const drag = useRef({ active: false, startX: 0, startLeft: 0 });
+  const [shell, setShell] = useState<ShellKind>("ps");
+  const first = useDecode("Muhammad");
+  const last = useDecode("Mikail", 520);
 
-  const nearestIndex = (scroller: HTMLDivElement) => {
-    let nearest = 0;
-    let min = Infinity;
-    Array.from(scroller.children).forEach((c, i) => {
-      const d = Math.abs((c as HTMLElement).offsetLeft - scroller.scrollLeft);
-      if (d < min) {
-        min = d;
-        nearest = i;
-      }
-    });
-    return nearest;
-  };
+  // Program counter: scroll progress rendered as an address.
+  const { scrollYProgress } = useScroll();
+  const [pc, setPc] = useState(0);
+  useMotionValueEvent(scrollYProgress, "change", (v) => setPc(Math.round(v * 0x05ff)));
 
-  const scrollToCard = (i: number) => {
-    const scroller = scrollerRef.current;
-    if (!scroller) return;
-    const idx = Math.max(0, Math.min(PROJECTS.length - 1, i));
-    const card = scroller.children[idx] as HTMLElement | undefined;
-    if (card) scroller.scrollTo({ left: card.offsetLeft, behavior: "smooth" });
-  };
+  // Which section is currently executing.
+  const [active, setActive] = useState<string>("_start");
+  useEffect(() => {
+    const els = sections
+      .map((s) => document.getElementById(s.id))
+      .filter((el): el is HTMLElement => !!el);
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setActive(e.target.id);
+        });
+      },
+      { rootMargin: "-45% 0px -50% 0px" }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
 
-  const handleScroll = () => {
-    if (scrollerRef.current) setProj(nearestIndex(scrollerRef.current));
-  };
+  // Live clock register (client only, to keep hydration stable).
+  const [now, setNow] = useState<Date | null>(null);
+  useEffect(() => {
+    const tick = () => setNow(new Date());
+    const first = setTimeout(tick, 0);
+    const id = setInterval(tick, 1000);
+    return () => {
+      clearTimeout(first);
+      clearInterval(id);
+    };
+  }, []);
+  const clock = now
+    ? now.toLocaleTimeString("en-GB", { timeZone: "Asia/Jakarta", hour12: false })
+    : "--:--:--";
 
-  const DRAG_THRESHOLD = 6;
-
-  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (e.pointerType !== "mouse") return;
-    const scroller = scrollerRef.current;
-    if (!scroller) return;
-    // Don't capture yet — wait until the pointer actually moves past the threshold
-    // so that clicks on child anchors still fire normally.
-    drag.current = { active: false, startX: e.clientX, startLeft: scroller.scrollLeft };
-  };
-
-  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (e.pointerType !== "mouse" || e.buttons === 0) return;
-    const scroller = scrollerRef.current;
-    if (!scroller) return;
-    const dx = Math.abs(e.clientX - drag.current.startX);
-    if (!drag.current.active) {
-      if (dx < DRAG_THRESHOLD) return;
-      drag.current.active = true;
-      scroller.setPointerCapture(e.pointerId);
+  const [sending, setSending] = useState(false);
+  const onSubmit = async (e: React.FormEvent) => {
+    setSending(true);
+    try {
+      await submitForm(e);
+    } finally {
+      setSending(false);
     }
-    scroller.scrollLeft = drag.current.startLeft - (e.clientX - drag.current.startX);
   };
 
-  const endDrag = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!drag.current.active) return;
-    drag.current.active = false;
-    scrollerRef.current?.releasePointerCapture?.(e.pointerId);
-    if (scrollerRef.current) scrollToCard(nearestIndex(scrollerRef.current));
-  };
+  const activeLabel = sections.find((s) => s.id === active)?.label;
+  const bytes = Array.from(TICKER_TEXT);
 
   return (
-    <div>
-      {/* NAV */}
-      <nav
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 100,
-          background: "rgba(255,255,255,.82)",
-          backdropFilter: "blur(14px)",
-          borderBottom: "1px solid #e8eef6",
-        }}
-      >
-        <div style={{ maxWidth: 1180, margin: "0 auto", padding: "18px 40px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <a href="#top-a" style={{ fontFamily: FONT_SPACE, fontWeight: 700, fontSize: 21, letterSpacing: "-.02em", color: "#0a2342" }}>
-            Portofolio<span style={{ color: "#1b63d6" }}>.</span>
+    <MotionConfig reducedMotion="user">
+    <ShellContext.Provider value={shell}>
+
+      {/* ============================== NAV */}
+      <nav className="nav" style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
+        <div className="wrap nav-in">
+          <a href="#top" className="brand">
+            <span className="brand-ico" aria-hidden>
+              {shell === "ps" ? ">_" : "C:\\"}
+            </span>
+            <span>
+              mikail<span className="dim">.asm</span>
+              <span className="hide-sm dim"> — {shell === "ps" ? "PowerShell" : "Command Prompt"}</span>
+            </span>
           </a>
-          <div style={{ display: "flex", gap: 34, fontFamily: FONT_SPACE, fontSize: 15, fontWeight: 500 }}>
-            {[
-              { href: "#about-a", label: "About" },
-              { href: "#stack-a", label: "Stack" },
-              { href: "#timeline-a", label: "Timeline" },
-              { href: "#work-a", label: "Works" },
-              { href: "#contact-a", label: "Contact" },
-            ].map((l) => (
-              <motion.a key={l.href} href={l.href} whileHover={{ color: accent, y: -2 }} transition={btnSpring} style={{ color: "#34507a" }}>
-                {l.label}
-              </motion.a>
+          <div className="nav-links">
+            {sections.map((s) => (
+              <a key={s.id} href={`#${s.id}`} className={active === s.id ? "on" : ""}>
+                {s.id}
+              </a>
             ))}
           </div>
-          <motion.a
-            href="#contact-a"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={btnSpring}
-            style={{ fontFamily: FONT_SPACE, fontSize: 14, fontWeight: 600, color: "#ffffff", background: accent, padding: "11px 22px", borderRadius: 99 }}
-          >
-            Get in touch
-          </motion.a>
+          <div className="nav-right">
+            <ShellToggle shell={shell} setShell={setShell} />
+            <div className="pc hide-md" aria-hidden>
+              PC <b>{hex(pc)}</b> · {activeLabel ? "." + activeLabel : "_start"}
+            </div>
+            <WinControls />
+          </div>
         </div>
+        <motion.div className="pc-bar" style={{ scaleX: scrollYProgress }} />
       </nav>
 
-      {/* HERO */}
-      <header id="top-a" style={{ maxWidth: 1180, margin: "0 auto", padding: "92px 40px 72px", display: "grid", gridTemplateColumns: "1.12fr .88fr", gap: 64, alignItems: "center" }}>
-        <div>
-          <div style={{ fontFamily: FONT_SPACE, fontWeight: 600, fontSize: 14, letterSpacing: ".08em", textTransform: "uppercase", color: "#1b63d6", marginBottom: 20 }}>
-            Software Engineering Student · Backend &amp; AI
+      {/* ============================== HERO */}
+      <header id="top" className="hero">
+        <div className="wrap">
+          <div className="hero-grid">
+            <div>
+              <div className="src-head" aria-hidden>
+                {shell === "ps" ? (
+                  <>
+                    <div>PowerShell 7.5.0</div>
+                    <div>Loading personal profile mikail.asm took 420ms.</div>
+                  </>
+                ) : (
+                  <>
+                    <div>mikail-os [Version 2026.10.09]</div>
+                    <div>(c) Muhammad Mikail. All rights reserved.</div>
+                  </>
+                )}
+                <Prompt cmd={CMDS.whoami} className="lbl" />
+              </div>
+
+              <h1 className="hero-name">
+                <span className="sr-only">Muhammad Mikail</span>
+                <span className="ln" aria-hidden>
+                  {first}
+                </span>
+                <span className="ln" aria-hidden>
+                  {last}
+                  <span className="caret" />
+                </span>
+              </h1>
+
+              <motion.p
+                className="hero-lede"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.9, duration: 0.6 }}
+              >
+                I build the <em>backend side of software</em> — with a steady pull toward AI.
+              </motion.p>
+
+              <motion.div
+                className="hero-cta"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.05, duration: 0.6 }}
+              >
+                <a href="#work" className="btn btn-solid">
+                  <span className="op">jmp</span> view experiments <span className="arw">→</span>
+                </a>
+                <a href="#contact" className="btn">
+                  <span className="op">call</span> get in touch
+                </a>
+              </motion.div>
+            </div>
+
+            <motion.figure
+              style={{ margin: 0 }}
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4, duration: 0.8, ease: [0.2, 0.7, 0.2, 1] }}
+            >
+              <div className="specimen">
+                <i className="c3" />
+                <i className="c4" />
+                <div className="specimen-img">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/foto.jpeg" alt="Portrait of Muhammad Mikail" />
+                  <div className="crosshair" />
+                </div>
+                <figcaption className="specimen-cap">
+                  <span>SPECIMEN 0x01</span>
+                  <span>CS · BINUS · JKT</span>
+                </figcaption>
+              </div>
+            </motion.figure>
           </div>
-          <h1 style={{ fontFamily: FONT_SPACE, fontWeight: 700, fontSize: "clamp(46px,5.8vw,76px)", lineHeight: 1.05, letterSpacing: "-.03em", margin: "0 0 24px", color: "#0a2342" }}>
-            MUHAMMAD MIKAIL
-          </h1>
-          <p style={{ fontSize: 18, lineHeight: 1.6, color: "#5b7290", maxWidth: 540, margin: "0 0 34px" }}>
-            I build the backend side of software, with a steady pull toward AI. Currently studying Software Engineering at BINUS University focused on backend architecture, API design, and microservices.
-          </p>
-          <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
-            <motion.a href="#work-a" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={btnSpring} style={{ fontFamily: FONT_SPACE, fontSize: 15, fontWeight: 600, color: "#ffffff", background: accent, padding: "15px 28px", borderRadius: 12 }}>View work →</motion.a>
-            <motion.a href="#contact-a" whileHover={{ scale: 1.05, borderColor: accent }} whileTap={{ scale: 0.95 }} transition={btnSpring} style={{ fontFamily: FONT_SPACE, fontSize: 15, fontWeight: 600, color: "#0a2342", background: "#ffffff", border: "1px solid #dde6f1", padding: "15px 28px", borderRadius: 12 }}>Download CV</motion.a>
+
+          <div className="regs" role="list" aria-label="Quick facts">
+            {[
+              { k: "R0 · GPA", v: "3.31", h: hex(321) },
+              { k: "R1 · IOFEST '26", v: "5th place", h: "0b" + bin(5) },
+              { k: "R2 · SHIPPED", v: `${PROJECTS.length} projects`, h: hex(PROJECTS.length, 2) },
+              { k: "CLK · JAKARTA", v: clock, h: "live" },
+            ].map((r) => (
+              <div key={r.k} className="reg" role="listitem">
+                <div className="reg-k">{r.k}</div>
+                <div className="reg-v">{r.v}</div>
+                <div className="reg-hex">{r.h}</div>
+              </div>
+            ))}
           </div>
         </div>
-        <div style={{ position: "relative" }}>
-          <div style={{ aspectRatio: "4/5", borderRadius: 20, border: "1px solid #dde6f1", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", background: "#f4f8fc" }}>
-            <img src="/foto.jpeg" alt="Muhammad Mikail" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+
+        {/* byte ticker — binary over its decoded glyph */}
+        <div className="ticker" aria-hidden>
+          <div className="ticker-track">
+            {[...bytes, ...bytes].map((c, i) => (
+              <div key={i} className={`byte${c === " " ? " sp" : ""}`}>
+                <span className="byte-b">{c.charCodeAt(0).toString(2).padStart(8, "0")}</span>
+                <span className="byte-c">{c === " " ? "␣" : c}</span>
+              </div>
+            ))}
           </div>
         </div>
       </header>
 
-      {/* ABOUT */}
-      <section id="about-a" style={{ borderTop: "1px solid #eef3f9", background: "#fbfcfe" }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto", padding: "96px 40px", display: "grid", gridTemplateColumns: ".9fr 1.1fr", gap: 64 }}>
-          <div>
-            <h2 style={{ ...h2, margin: "0", lineHeight: 1.15 }}>
-              Software engineering student at BINUS University who builds the backend side of software, with a steady pull toward AI.
-            </h2>
-          </div>
-          <div>
-            <p style={{ fontSize: 17, lineHeight: 1.75, color: "#46607f", margin: "0 0 22px" }}>
-              I went into software engineering because I like solving real problems by building systems that actually work, and I kept studying AI and machine learning because pairing the two is where the more interesting solutions live.
+      {/* ============================== ABOUT */}
+      <section id="about" className="wrap sect">
+        <SectionHead cmd={CMDS.about}>
+          A backend engineer <em>in the making</em>.
+        </SectionHead>
+        <div className="about-grid">
+          <Reveal>
+            <p className="about-pull">
+              I like solving real problems with systems that <em>actually work</em> — and pairing
+              them with AI.
             </p>
-            <p style={{ fontSize: 17, lineHeight: 1.75, color: "#46607f", margin: "0 0 22px" }}>
-              So far I have owned backend architecture, API design, and microservices across course and competition projects, and I am increasingly drawn to larger, more complex multi-service systems.
-            </p>
-            <p style={{ fontSize: 17, lineHeight: 1.75, color: "#46607f", margin: "0 0 40px" }}>
-              Recent highlight: backend developer and proposal writer for a circular-economy project that reached the IOFest 2026 final.
-            </p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 20 }}>
-              {[
-                { stat: "3.21", label: "GPA / 4.00" },
-                { stat: "Top 5", label: "IOFest 2026 finalist" },
-              ].map((s) => (
-                <div key={s.label} style={{ borderLeft: "2px solid #1b63d6", paddingLeft: 18 }}>
-                  <div style={{ fontFamily: FONT_SPACE, fontSize: 32, fontWeight: 700, color: "#0a2342" }}>{s.stat}</div>
-                  <div style={{ fontSize: 14, color: "#5b7290", marginTop: 4 }}>{s.label}</div>
-                </div>
-              ))}
+          </Reveal>
+          <Reveal delay={0.1}>
+            <div className="about-text">
+              <p>
+                Software Engineering student at BINUS University. I own backend architecture, API
+                design and microservices across course and competition projects.
+              </p>
+              <p>
+                I also co-founded <span className="hl">NATY</span>, a small software studio.
+              </p>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* SKILLS */}
-      <section id="stack-a" style={{ maxWidth: 1180, margin: "0 auto", padding: "96px 40px" }}>
-        <h2 style={{ ...h2, margin: "0 0 44px" }}>Tools I reach for</h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 18 }}>
-          {skillGroups.map((g) => (
-            <div key={g.title} style={{ border: "1px solid #e3eaf3", borderRadius: 16, padding: "28px 30px" }}>
-              <div style={{ fontFamily: FONT_SPACE, fontWeight: 600, fontSize: 17, marginBottom: 18 }}>{g.title}</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 9 }}>
-                {g.items.map((it) => (
-                  <span key={it} style={chipStyle}>{it}</span>
-                ))}
+      {/* ============================== STACK / ISA */}
+      <section id="stack" className="wrap sect">
+        <SectionHead cmd={CMDS.stack}>
+          My <em>instruction set</em>.
+        </SectionHead>
+        <div className="isa">
+          {isa.map((r, i) => (
+            <Reveal key={r.mn} delay={i * 0.04}>
+              <div className="isa-row">
+                <div className="isa-op">{opcode(r.mn)}</div>
+                <div className="isa-mn">
+                  {r.mn}
+                  <small>{r.desc}</small>
+                </div>
+                <div className="isa-args">
+                  {r.items.map((it) => (
+                    <span key={it}>{it}</span>
+                  ))}
+                </div>
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
       </section>
 
-      {/* TIMELINE + EDUCATION */}
-      <section id="timeline-a" style={{ borderTop: "1px solid #eef3f9", background: "#fbfcfe" }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto", padding: "96px 40px", display: "grid", gridTemplateColumns: "1.05fr .95fr", gap: 72 }}>
-          <div>
-            <h2 style={{ ...h2, margin: "0 0 40px" }}>Experience &amp; highlights</h2>
-            <div style={{ borderLeft: "2px solid #e3eaf3", paddingLeft: 30, display: "flex", flexDirection: "column", gap: 34 }}>
-              {timeline.map((t) => (
-                <div key={t.title} style={{ position: "relative" }}>
-                  <span style={{ position: "absolute", left: -37, top: 4, width: 12, height: 12, borderRadius: 99, background: t.dotActive ? "#1b63d6" : "#bcccdf", border: "3px solid #fbfcfe" }} />
-                  <div style={{ fontFamily: FONT_MONO, fontSize: 12, color: "#1b63d6", letterSpacing: ".05em" }}>{t.period}</div>
-                  <div style={{ fontFamily: FONT_SPACE, fontWeight: 600, fontSize: 19, margin: "6px 0 2px" }}>{t.title}</div>
-                  <p style={{ fontSize: 15, color: "#5b7290", margin: 0, lineHeight: 1.6 }}>{t.body}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div id="education-a">
-            <h2 style={{ ...h2, margin: "0 0 40px" }}>Education</h2>
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {education.map((e) => (
-                <div key={e.title} style={{ background: "#ffffff", border: "1px solid #e3eaf3", borderRadius: 16, padding: "26px 28px" }}>
-                  <div style={{ fontFamily: FONT_MONO, fontSize: 12, color: "#1b63d6", letterSpacing: ".05em" }}>{e.period}</div>
-                  <div style={{ fontFamily: FONT_SPACE, fontWeight: 600, fontSize: 19, margin: "8px 0 4px" }}>{e.title}</div>
-                  <div style={{ fontSize: 15, color: "#5b7290", lineHeight: 1.55 }}>{e.body}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+      {/* ============================== TRACE / MOTHERBOARD */}
+      <section id="trace" className="wrap sect">
+        <SectionHead cmd={CMDS.trace}>
+          Experience, <em>etched in copper</em>.
+        </SectionHead>
+        <Board />
       </section>
 
-      {/* WORKS CAROUSEL (drag to scroll) */}
-      <section id="work-a" style={{ maxWidth: 1180, margin: "0 auto", padding: "96px 40px", overflow: "hidden" }}>
-        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 44 }}>
-          <div>
-            <h2 style={{ ...h2, margin: "0" }}>Selected projects</h2>
-            <div style={{ fontFamily: FONT_MONO, fontSize: 12, color: "#7d93b0", marginTop: 10 }}>← scroll / drag to browse →</div>
-          </div>
-          <div style={{ display: "flex", gap: 10 }}>
-            <motion.button onClick={() => scrollToCard(proj - 1)} whileHover={{ scale: 1.12, backgroundColor: "#f4f8fc" }} whileTap={{ scale: 0.9 }} transition={btnSpring} style={{ width: 46, height: 46, borderRadius: 99, border: "1px solid #dde6f1", background: "#ffffff", cursor: "pointer", fontSize: 18, color: "#0a2342" }}>←</motion.button>
-            <motion.button onClick={() => scrollToCard(proj + 1)} whileHover={{ scale: 1.12, backgroundColor: "#f4f8fc" }} whileTap={{ scale: 0.9 }} transition={btnSpring} style={{ width: 46, height: 46, borderRadius: 99, border: "1px solid #dde6f1", background: "#ffffff", cursor: "pointer", fontSize: 18, color: "#0a2342" }}>→</motion.button>
-          </div>
-        </div>
-        <div
-          ref={scrollerRef}
-          className="works-scroller"
-          onScroll={handleScroll}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={endDrag}
-          onPointerCancel={endDrag}
-          style={{
-            display: "flex",
-            gap: 24,
-            overflowX: "auto",
-            scrollSnapType: "x mandatory",
-            overscrollBehaviorX: "contain",
-            padding: "12px 0 26px",
-            cursor: "grab",
-          }}
-        >
-          {PROJECTS.map((p) => (
-            <motion.article
-              key={p.title}
-              whileHover={{ y: -8 }}
-              transition={{ type: "spring", stiffness: 300, damping: 26 }}
-              style={{ flex: "0 0 78%", scrollSnapAlign: "start", background: "#ffffff", border: "1px solid #dde6f1", borderRadius: 18, overflow: "hidden", boxShadow: "0 24px 50px -34px rgba(10,35,66,.5)" }}
-            >
-                {p.link ? (
-                  <a href={p.link} target="_blank" rel="noopener noreferrer" style={{ display: "block", aspectRatio: "16/9", borderBottom: "1px solid #dde6f1", overflow: "hidden", position: "relative", background: "#f4f8fc" }}>
-                    <motion.img
-                      src={p.image}
-                      alt={p.title}
-                      whileHover={{ scale: 1.04 }}
-                      transition={{ duration: 0.3 }}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
-                  </a>
+      {/* ============================== EXPERIMENTS */}
+      <section id="work" className="wrap sect sect-work">
+        <SectionHead cmd={CMDS.work}>
+          Selected <em>experiments</em>.
+        </SectionHead>
+        <Experiments />
+      </section>
+
+      {/* ============================== SYSCALL / CONTACT */}
+      <section id="contact" className="wrap sect">
+        <div className="contact-grid">
+          <Reveal>
+            <Prompt cmd={CMDS.contact} className="sh-head" />
+            <h2 className="contact-big">
+              Let&apos;s build something <em>solid.</em>
+            </h2>
+            <p className="contact-lede">
+              Backend, AI, internship or collab — send a message, it lands straight in my inbox.
+            </p>
+            <div className="links">
+              <a href={`mailto:${CONTACT_EMAIL}`}>
+                <span className="k">mail</span>
+                <span>{CONTACT_EMAIL}</span>
+                <span className="arr">↗</span>
+              </a>
+              <a href="https://github.com/MikailMuh" target="_blank" rel="noopener noreferrer">
+                <span className="k">git</span>
+                <span>github.com/MikailMuh</span>
+                <span className="arr">↗</span>
+              </a>
+              <a
+                href="https://linkedin.com/in/muhammad-mikail-281780317"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span className="k">in</span>
+                <span>linkedin.com/in/muhammad-mikail</span>
+                <span className="arr">↗</span>
+              </a>
+              <a href="tel:+629592182677">
+                <span className="k">tel</span>
+                <span>+62 959-2182-677</span>
+                <span className="arr">↗</span>
+              </a>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.1}>
+            <div className="term">
+              <div className="term-bar">
+                <span>
+                  <span className="brand-ico sm" aria-hidden>
+                    {shell === "ps" ? ">_" : "C:\\"}
+                  </span>{" "}
+                  inbox — {shell === "ps" ? "Send-Message" : "mail.exe"}
+                </span>
+                <WinControls />
+              </div>
+              <div className="term-body">
+                {!sent ? (
+                  <form onSubmit={onSubmit}>
+                    <div className="field">
+                      <label htmlFor="f-name">name &gt;</label>
+                      <input
+                        id="f-name"
+                        value={form.name}
+                        onChange={(e) => setField("name", e.target.value)}
+                        placeholder="Jane Doe"
+                        autoComplete="name"
+                        required
+                      />
+                    </div>
+                    <div className="field">
+                      <label htmlFor="f-email">email &gt;</label>
+                      <input
+                        id="f-email"
+                        type="email"
+                        value={form.email}
+                        onChange={(e) => setField("email", e.target.value)}
+                        placeholder="jane@company.com"
+                        autoComplete="email"
+                        required
+                      />
+                    </div>
+                    <div className="field">
+                      <label htmlFor="f-msg">message &gt;</label>
+                      <textarea
+                        id="f-msg"
+                        rows={5}
+                        value={form.message}
+                        onChange={(e) => setField("message", e.target.value)}
+                        placeholder="Tell me about your project…"
+                        required
+                      />
+                    </div>
+                    <div className="term-foot">
+                      <span className="cm">{shell === "ps" ? "#" : "REM"} goes to my private inbox</span>
+                      <button type="submit" className="btn btn-solid" disabled={sending}>
+                        {sending ? "executing…" : "execute ⏎"}
+                      </button>
+                    </div>
+                  </form>
                 ) : (
-                  <div style={{ aspectRatio: "16/9", borderBottom: "1px solid #dde6f1", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", background: "#f4f8fc" }}>
-                    <img src={p.image} alt={p.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  <div className="term-ok" role="status">
+                    <div>
+                      <PromptPrefix shell={shell} /> {CMDS.contact[shell]}
+                    </div>
+                    <div>
+                      Stored in inbox ......... <span className="g">ok</span>
+                    </div>
+                    <div>
+                      {shell === "ps" ? "$LASTEXITCODE" : "%ERRORLEVEL%"} <span className="g">0</span>
+                    </div>
+                    <p className="term-thanks">Thanks for reaching out — I&apos;ll get back to you soon.</p>
+                    <button type="button" onClick={resetSent} className="btn">
+                      <span className="op">jmp</span> send another
+                    </button>
                   </div>
                 )}
-                <div style={{ padding: "28px 32px 32px" }}>
-                  <div style={{ fontFamily: FONT_MONO, fontSize: 12, letterSpacing: ".12em", color: "#1b63d6" }}>{p.tag}</div>
-                  <h3 style={{ fontFamily: FONT_SPACE, fontWeight: 700, fontSize: 26, margin: "10px 0 12px", letterSpacing: "-.01em" }}>
-                    {p.link ? (
-                      <a href={p.link} target="_blank" rel="noopener noreferrer" style={{ color: "#0a2342", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 8 }}>
-                        {p.title} <span style={{ fontSize: 18, color: "#1b63d6" }}>↗</span>
-                      </a>
-                    ) : (
-                      p.title
-                    )}
-                  </h3>
-                  <p style={{ fontSize: 16, lineHeight: 1.65, color: "#5b7290", margin: "0 0 20px", maxWidth: 640 }}>{p.descA}</p>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 14, marginTop: 12 }}>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 9 }}>
-                      {p.techs.map((t) => (
-                        <span key={t} style={cardChipStyle}>{t}</span>
-                      ))}
-                    </div>
-                    {p.link && (
-                      <motion.a
-                        href={p.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        whileHover={{ x: 4, color: "#1b63d6" }}
-                        transition={btnSpring}
-                        style={{ fontFamily: FONT_SPACE, fontSize: 14, fontWeight: 600, color: "#0a2342", display: "inline-flex", alignItems: "center", gap: 4, textDecoration: "none" }}
-                      >
-                        Visit Project <span style={{ color: "#1b63d6" }}>↗</span>
-                      </motion.a>
-                    )}
-                  </div>
-                </div>
-              </motion.article>
-          ))}
-        </div>
-        <div style={{ display: "flex", justifyContent: "center", gap: 9, marginTop: 38 }}>
-          {PROJECTS.map((_, k) => (
-            <motion.button
-              key={k}
-              onClick={() => scrollToCard(k)}
-              whileHover={{ scale: 1.35 }}
-              whileTap={{ scale: 0.85 }}
-              transition={btnSpring}
-              animate={{ width: k === proj ? 30 : 9, backgroundColor: k === proj ? accent : "#c5d2e2" }}
-              style={{ height: 9, borderRadius: 99, border: "none", cursor: "pointer", padding: 0 }}
-            />
-          ))}
+              </div>
+            </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* CONTACT */}
-      <section id="contact-a" style={{ background: "#0a2342", color: "#ffffff" }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 72 }}>
-          <div>
-            <h2 style={{ fontFamily: FONT_SPACE, fontWeight: 600, fontSize: "clamp(34px,4.5vw,52px)", letterSpacing: "-.03em", margin: "0 0 18px", lineHeight: 1.05 }}>Let&apos;s build something solid.</h2>
-            <p style={{ fontSize: 18, color: "#9fb4d2", maxWidth: 440, margin: "0 0 40px", lineHeight: 1.6 }}>
-              Have a backend or AI project, internship, or collaboration in mind? Drop me a message — it lands straight in my dashboard.
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 18, fontFamily: FONT_MONO, fontSize: 14 }}>
-              <motion.a href="tel:+629592182677" whileHover={{ x: 4, color: "#ffffff" }} transition={btnSpring} style={{ color: "#dbe7fb", display: "flex", alignItems: "center", gap: 12 }}>
-                <span style={{ width: 6, height: 6, borderRadius: 99, background: accent }} />+62 959-2182-677
-              </motion.a>
-              <motion.a href={`mailto:${CONTACT_EMAIL}`} whileHover={{ x: 4, color: "#ffffff" }} transition={btnSpring} style={{ color: "#dbe7fb", display: "flex", alignItems: "center", gap: 12 }}>
-                <span style={{ width: 6, height: 6, borderRadius: 99, background: accent }} />{CONTACT_EMAIL}
-              </motion.a>
-              <motion.a href="https://github.com/MikailMuh" whileHover={{ x: 4, color: "#ffffff" }} transition={btnSpring} style={{ color: "#dbe7fb", display: "flex", alignItems: "center", gap: 12 }}>
-                <span style={{ width: 6, height: 6, borderRadius: 99, background: accent }} />github.com/MikailMuh
-              </motion.a>
-              <motion.a href="https://linkedin.com/in/muhammad-mikail-281780317" whileHover={{ x: 4, color: "#ffffff" }} transition={btnSpring} style={{ color: "#dbe7fb", display: "flex", alignItems: "center", gap: 12 }}>
-                <span style={{ width: 6, height: 6, borderRadius: 99, background: accent }} />linkedin.com/in/muhammad-mikail
-              </motion.a>
-              <div style={{ color: "#9fb4d2", display: "flex", alignItems: "center", gap: 12 }}>
-                <span style={{ width: 6, height: 6, borderRadius: 99, background: "#3f5d84" }} />Icon Residence, Palmerah, Jakarta Barat
-              </div>
-            </div>
-          </div>
-          <div>
-            {!sent ? (
-              <form onSubmit={submitForm} style={{ display: "flex", flexDirection: "column", gap: 16, background: "#0d2a4f", border: "1px solid #1c3b60", borderRadius: 18, padding: 32 }}>
-                <div>
-                  <label style={{ fontFamily: FONT_MONO, fontSize: 12, color: "#9fb4d2", letterSpacing: ".05em" }}>YOUR NAME</label>
-                  <input value={form.name} onChange={(e) => setField("name", e.target.value)} placeholder="Jane Doe" style={{ width: "100%", marginTop: 8, background: "#081f3c", border: "1px solid #1c3b60", borderRadius: 10, padding: "13px 14px", color: "#ffffff", fontSize: 15, outline: "none" }} />
-                </div>
-                <div>
-                  <label style={{ fontFamily: FONT_MONO, fontSize: 12, color: "#9fb4d2", letterSpacing: ".05em" }}>EMAIL</label>
-                  <input value={form.email} onChange={(e) => setField("email", e.target.value)} type="email" placeholder="jane@company.com" style={{ width: "100%", marginTop: 8, background: "#081f3c", border: "1px solid #1c3b60", borderRadius: 10, padding: "13px 14px", color: "#ffffff", fontSize: 15, outline: "none" }} />
-                </div>
-                <div>
-                  <label style={{ fontFamily: FONT_MONO, fontSize: 12, color: "#9fb4d2", letterSpacing: ".05em" }}>MESSAGE</label>
-                  <textarea value={form.message} onChange={(e) => setField("message", e.target.value)} rows={4} placeholder="Tell me about your project..." style={{ width: "100%", marginTop: 8, background: "#081f3c", border: "1px solid #1c3b60", borderRadius: 10, padding: "13px 14px", color: "#ffffff", fontSize: 15, outline: "none", resize: "vertical" }} />
-                </div>
-                <motion.button type="submit" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={btnSpring} style={{ fontFamily: FONT_SPACE, fontSize: 15, fontWeight: 600, color: "#ffffff", background: accent, border: "none", padding: 15, borderRadius: 11, cursor: "pointer", marginTop: 4 }}>Send message →</motion.button>
-              </form>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", background: "#0d2a4f", border: "1px solid #1c3b60", borderRadius: 18, padding: "56px 32px", minHeight: 360 }}>
-                <div style={{ width: 56, height: 56, borderRadius: 99, background: "#173f1f", border: "1px solid #2a7d3f", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 22 }}>
-                  <span style={{ color: "#4ade80", fontSize: 26 }}>✓</span>
-                </div>
-                <div style={{ fontFamily: FONT_SPACE, fontWeight: 600, fontSize: 22, marginBottom: 8 }}>Message sent!</div>
-                <p style={{ fontSize: 15, color: "#9fb4d2", maxWidth: 300, margin: "0 0 26px", lineHeight: 1.55 }}>Thanks for reaching out — your message is saved in Mikail&apos;s dashboard.</p>
-                <motion.button onClick={resetSent} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={btnSpring} style={{ fontFamily: FONT_SPACE, fontSize: 14, fontWeight: 600, color: "#0a2342", background: "#ffffff", border: "none", padding: "12px 24px", borderRadius: 10, cursor: "pointer" }}>Send another</motion.button>
-              </div>
-            )}
+      {/* ============================== FOOTER */}
+      <footer className="foot">
+        <div className="wrap">
+          <p className="foot-hlt" aria-hidden>
+            exit<span>[process exited with code 0 (0x00000000)]</span>
+          </p>
+          <div className="foot-row">
+            <span>© 2026 Muhammad Mikail — assembled in Jakarta</span>
+            <button type="button" onClick={openDash}>
+              owner dashboard →
+            </button>
           </div>
         </div>
-        <div style={{ maxWidth: 1180, margin: "8px auto 0", padding: "28px 40px 56px", display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid #1c3b60", fontFamily: FONT_MONO, fontSize: 12, color: "#5f7ba3" }}>
-          <span>© 2026 Muhammad Mikail — Backend &amp; AI</span>
-          <motion.button onClick={openDash} whileHover={{ scale: 1.05, color: "#ffffff" }} whileTap={{ scale: 0.95 }} transition={btnSpring} style={{ background: "none", border: "none", color: "#7fa3da", fontFamily: FONT_MONO, fontSize: 12, cursor: "pointer" }}>Owner dashboard →</motion.button>
-        </div>
-      </section>
-    </div>
+      </footer>
+    </ShellContext.Provider>
+    </MotionConfig>
   );
 }
